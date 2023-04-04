@@ -78,4 +78,4 @@ MYSQL_COMMAND="
     );
 "
 
-mysql -uroot -e "$MYSQL_COMMAND";
+mysql -u${DB_ROOT} -p${DB_ROOT_PASSWORD} -e "$MYSQL_COMMAND";
