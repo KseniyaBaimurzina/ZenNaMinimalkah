@@ -1,0 +1,24 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node server.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/KseniyaBaimurzina/ZenNaMinimalkah.git"
+    },
+    "author": "KseniyaBaimurzina",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/KseniyaBaimurzina/ZenNaMinimalkah/issues"
+    },
+    "homepage": "https://github.com/KseniyaBaimurzina/ZenNaMinimalkah#readme",
+    "dependencies": {
+        "express": "^4.18.2"
+    },
+    "type": "module"
+}
