@@ -26,53 +26,53 @@ MYSQL_COMMAND="
     CREATE TABLE IF NOT EXISTS Categories (category VARCHAR(50) NOT NULL UNIQUE, PRIMARY KEY (category));
 
     CREATE TABLE IF NOT EXISTS Reviews (
-        reviewID int NOT NULL UNIQUE AUTO_INCREMENT, 
-        creatorEmail VARCHAR(100) NOT NULL, 
+        review_id int NOT NULL UNIQUE AUTO_INCREMENT, 
+        creator_email VARCHAR(100) NOT NULL, 
         category VARCHAR(50) NOT NULL,
         title VARCHAR(255) NOT NULL,
         product_name VARCHAR(255) NOT NULL, 
         content MEDIUMTEXT NOT NULL, 
-        creators_rate int NOT NULL, 
+        rate int NOT NULL, 
         image_path VARCHAR(255), 
-        dateTime DATETIME DEFAULT CURRENT_TIMESTAMP, 
-        PRIMARY KEY (reviewID), 
-        FOREIGN KEY (creatorEmail) REFERENCES Users(email), 
+        creation_time DATETIME DEFAULT CURRENT_TIMESTAMP, 
+        PRIMARY KEY (review_id), 
+        FOREIGN KEY (creator_email) REFERENCES Users(email), 
         FOREIGN KEY (category) REFERENCES Categories(category)
     );
 
     CREATE TABLE IF NOT EXISTS ReviewTags (
-        reviewID int NOT NULL, 
+        review_id int NOT NULL, 
         tag VARCHAR(100) NOT NULL, 
-        FOREIGN KEY (reviewID) REFERENCES Reviews(reviewID), 
+        FOREIGN KEY (review_id) REFERENCES Reviews(review_id), 
         FOREIGN KEY (tag) REFERENCES Tags(tag), 
-        PRIMARY KEY (reviewID, tag)
+        PRIMARY KEY (review_id, tag)
     );
 
     CREATE TABLE IF NOT EXISTS Raitings (
-        userEmail VARCHAR(100) NOT NULL, 
-        reviewID int NOT NULL, 
-        FOREIGN KEY (userEmail) REFERENCES Users(email), 
-        FOREIGN KEY (reviewID) REFERENCES Reviews(reviewID), 
-        PRIMARY KEY (userEmail, reviewID)
+        user_email VARCHAR(100) NOT NULL, 
+        review_id int NOT NULL, 
+        FOREIGN KEY (user_email) REFERENCES Users(email), 
+        FOREIGN KEY (review_id) REFERENCES Reviews(review_id), 
+        PRIMARY KEY (user_email, review_id)
     );
 
     CREATE TABLE IF NOT EXISTS Likes (
-        creatorEmail VARCHAR(100) NOT NULL, 
-        reviewID int NOT NULL, 
-        FOREIGN KEY (creatorEmail) REFERENCES Users(email), 
-        FOREIGN KEY (reviewID) REFERENCES Reviews(reviewID), 
-        PRIMARY KEY (creatorEmail, reviewID)
+        creator_email VARCHAR(100) NOT NULL, 
+        review_id int NOT NULL, 
+        FOREIGN KEY (creator_email) REFERENCES Users(email), 
+        FOREIGN KEY (review_id) REFERENCES Reviews(review_id), 
+        PRIMARY KEY (creator_email, review_id)
     );
 
     CREATE TABLE IF NOT EXISTS Comments (
         commentID int NOT NULL UNIQUE AUTO_INCREMENT, 
-        creatorEmail VARCHAR(100) NOT NULL, 
-        reviewID int NOT NULL, 
+        creator_email VARCHAR(100) NOT NULL, 
+        review_id int NOT NULL, 
         text TEXT NOT NULL, 
-        dateTime DATETIME DEFAULT CURRENT_TIMESTAMP, 
+        creation_time DATETIME DEFAULT CURRENT_TIMESTAMP, 
         PRIMARY KEY (commentID), 
-        FOREIGN KEY (creatorEmail) REFERENCES Users(email), 
-        FOREIGN KEY (reviewID) REFERENCES Reviews(reviewID)
+        FOREIGN KEY (creator_email) REFERENCES Users(email), 
+        FOREIGN KEY (review_id) REFERENCES Reviews(review_id)
     );
 "
 
