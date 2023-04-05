@@ -28,8 +28,7 @@ MYSQL_COMMAND="
     CREATE TABLE IF NOT EXISTS Reviews (
         reviewID int NOT NULL UNIQUE AUTO_INCREMENT, 
         creatorEmail VARCHAR(100) NOT NULL, 
-        category VARCHAR(50) NOT NULL, 
-        tag VARCHAR(100) NOT NULL, 
+        category VARCHAR(50) NOT NULL,
         title VARCHAR(255) NOT NULL,
         product_name VARCHAR(255) NOT NULL, 
         content MEDIUMTEXT NOT NULL, 
@@ -38,8 +37,7 @@ MYSQL_COMMAND="
         dateTime DATETIME DEFAULT CURRENT_TIMESTAMP, 
         PRIMARY KEY (reviewID), 
         FOREIGN KEY (creatorEmail) REFERENCES Users(email), 
-        FOREIGN KEY (category) REFERENCES Categories(category), 
-        FOREIGN KEY (tag) REFERENCES Tags(tag)
+        FOREIGN KEY (category) REFERENCES Categories(category)
     );
 
     CREATE TABLE IF NOT EXISTS ReviewTags (
@@ -66,7 +64,7 @@ MYSQL_COMMAND="
         PRIMARY KEY (creatorEmail, reviewID)
     );
 
-    CREATE TABLE Comments (
+    CREATE TABLE IF NOT EXISTS Comments (
         commentID int NOT NULL UNIQUE AUTO_INCREMENT, 
         creatorEmail VARCHAR(100) NOT NULL, 
         reviewID int NOT NULL, 
