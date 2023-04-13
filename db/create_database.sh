@@ -15,7 +15,7 @@ MYSQL_COMMAND="
     CREATE TABLE IF NOT EXISTS Users (
         email VARCHAR(100) NOT NULL UNIQUE, 
         username VARCHAR(50) NOT NULL UNIQUE, 
-        password VARCHAR(50) NOT NULL, 
+        password VARCHAR(100) NOT NULL, 
         role VARCHAR(50) NOT NULL, 
         PRIMARY KEY (email), 
         FOREIGN KEY (role) REFERENCES Roles(role)
@@ -75,6 +75,10 @@ MYSQL_COMMAND="
         FOREIGN KEY (creator_email) REFERENCES Users(email), 
         FOREIGN KEY (review_id) REFERENCES Reviews(review_id)
     );
+
+    INSERT INTO Roles (role) VALUES ('admin'), ('user');
+
+    INSERT INTO Categories (category) VALUES ('Books'), ('Movies'), ('TV Shows'), ('Games'), ('Music');
 "
 
 mysql -u${DB_ROOT} -p${DB_ROOT_PASSWORD} -e "$MYSQL_COMMAND";
