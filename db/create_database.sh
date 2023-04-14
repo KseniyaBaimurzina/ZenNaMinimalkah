@@ -27,7 +27,7 @@ MYSQL_COMMAND="
 
     CREATE TABLE IF NOT EXISTS Reviews (
         review_id int NOT NULL UNIQUE AUTO_INCREMENT, 
-        creator_email VARCHAR(100) NOT NULL, 
+        creator_username VARCHAR(100) NOT NULL, 
         category VARCHAR(50) NOT NULL,
         title VARCHAR(255) NOT NULL,
         product_name VARCHAR(255) NOT NULL, 
@@ -49,7 +49,7 @@ MYSQL_COMMAND="
     );
 
     CREATE TABLE IF NOT EXISTS Raitings (
-        user_email VARCHAR(100) NOT NULL, 
+        creator_username VARCHAR(100) NOT NULL, 
         review_id int NOT NULL, 
         rate int NOT NULL, 
         FOREIGN KEY (user_email) REFERENCES Users(email), 
@@ -58,7 +58,7 @@ MYSQL_COMMAND="
     );
 
     CREATE TABLE IF NOT EXISTS Likes (
-        creator_email VARCHAR(100) NOT NULL, 
+        creator_username VARCHAR(100) NOT NULL, 
         review_id int NOT NULL, 
         FOREIGN KEY (creator_email) REFERENCES Users(email), 
         FOREIGN KEY (review_id) REFERENCES Reviews(review_id), 
@@ -67,7 +67,7 @@ MYSQL_COMMAND="
 
     CREATE TABLE IF NOT EXISTS Comments (
         comment_id int NOT NULL UNIQUE AUTO_INCREMENT, 
-        creator_email VARCHAR(100) NOT NULL, 
+        creator_username VARCHAR(100) NOT NULL, 
         review_id int NOT NULL, 
         text TEXT NOT NULL, 
         creation_time DATETIME DEFAULT CURRENT_TIMESTAMP, 
