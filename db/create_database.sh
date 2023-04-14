@@ -17,7 +17,7 @@ MYSQL_COMMAND="
         username VARCHAR(50) NOT NULL UNIQUE, 
         password VARCHAR(100) NOT NULL, 
         role VARCHAR(50) NOT NULL, 
-        PRIMARY KEY (email), 
+        PRIMARY KEY (username), 
         FOREIGN KEY (role) REFERENCES Roles(role)
         );
 
@@ -36,7 +36,7 @@ MYSQL_COMMAND="
         image_path VARCHAR(255), 
         creation_time DATETIME DEFAULT CURRENT_TIMESTAMP, 
         PRIMARY KEY (review_id), 
-        FOREIGN KEY (creator_email) REFERENCES Users(email), 
+        FOREIGN KEY (creator_username) REFERENCES Users(username), 
         FOREIGN KEY (category) REFERENCES Categories(category)
     );
 
@@ -52,17 +52,17 @@ MYSQL_COMMAND="
         creator_username VARCHAR(100) NOT NULL, 
         review_id int NOT NULL, 
         rate int NOT NULL, 
-        FOREIGN KEY (user_email) REFERENCES Users(email), 
+        FOREIGN KEY (creator_username) REFERENCES Users(username), 
         FOREIGN KEY (review_id) REFERENCES Reviews(review_id), 
-        PRIMARY KEY (user_email, review_id)
+        PRIMARY KEY (creator_username, review_id)
     );
 
     CREATE TABLE IF NOT EXISTS Likes (
         creator_username VARCHAR(100) NOT NULL, 
         review_id int NOT NULL, 
-        FOREIGN KEY (creator_email) REFERENCES Users(email), 
+        FOREIGN KEY (creator_username) REFERENCES Users(username), 
         FOREIGN KEY (review_id) REFERENCES Reviews(review_id), 
-        PRIMARY KEY (creator_email, review_id)
+        PRIMARY KEY (creator_username, review_id)
     );
 
     CREATE TABLE IF NOT EXISTS Comments (
@@ -72,7 +72,7 @@ MYSQL_COMMAND="
         text TEXT NOT NULL, 
         creation_time DATETIME DEFAULT CURRENT_TIMESTAMP, 
         PRIMARY KEY (comment_id), 
-        FOREIGN KEY (creator_email) REFERENCES Users(email), 
+        FOREIGN KEY (creator_username) REFERENCES Users(username), 
         FOREIGN KEY (review_id) REFERENCES Reviews(review_id)
     );
 
