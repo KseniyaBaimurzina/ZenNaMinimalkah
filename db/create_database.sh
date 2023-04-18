@@ -48,7 +48,7 @@ MYSQL_COMMAND="
         PRIMARY KEY (review_id, tag)
     );
 
-    CREATE TABLE IF NOT EXISTS Raitings (
+    CREATE TABLE IF NOT EXISTS Ratings (
         creator_username VARCHAR(100) NOT NULL, 
         review_id int NOT NULL, 
         rate int NOT NULL, 

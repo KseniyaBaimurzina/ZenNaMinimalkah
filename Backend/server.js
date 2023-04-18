@@ -159,7 +159,7 @@ function CreateRate(rate, review_id, access_token) {
     return new Promise(async(resolve, reject) => {
         try {
             var username = "'" + jwt.verify(access_token, config["SECRET_JWT_KEY"]).username + "'",
-                table = "Raitings",
+                table = "Ratings",
                 columns = ["review_id", "creator_username", "rate"],
                 values = [review_id, username, rate],
                 res = await db.createQuery(table, columns, values);
@@ -220,7 +220,7 @@ function GetPopularReviews(page) {
                 ratingPromises = reviews.map(obj => GetRating(obj.review_id));
             var ratings = await Promise.all(ratingPromises);
             reviews.forEach((obj, index) => {
-                obj.users_raiting = ratings[index];
+                obj.users_rating = ratings[index];
                 obj.like_count = likesRows[index].like_count;
             });
             resolve(reviews);
@@ -242,7 +242,7 @@ function GetLatestReviews(page) {
             var ratingPromises = reviews.map(obj => GetRating(obj.review_id));
             var ratings = await Promise.all(ratingPromises);
             reviews.forEach((obj, index) => {
-                obj.users_raiting = ratings[index];
+                obj.users_rating = ratings[index];
                 obj.like_count = likesRows[index].like_count;
             });
             resolve(reviews);
@@ -271,12 +271,12 @@ function GetReviewComments(review_id) {
 function GetRating(review_id) {
     return new Promise(async(resolve, reject) => {
         try {
-            var table = "Raitings",
+            var table = "Ratings",
                 column = "review_id",
                 value = review_id,
                 res = await db.getQuery(table, column, value);
             var averageRating = res.reduce((acc, curr) => acc + curr.rate, 0) / res.length;
-            console.log("This is average raiting " + averageRating);
+            console.log("This is average rating " + averageRating);
             resolve(averageRating);
         } catch (error) {
             console.error(error);
