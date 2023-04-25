@@ -4,7 +4,6 @@ import crypto from "crypto";
 import * as dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
-import passport from "passport";
 import User from "./DBModels/user.js";
 import Review from "./DBModels/review.js";
 import Comment from "./DBModels/comment.js";
@@ -22,8 +21,6 @@ const app = express();
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
-app.use(passport.initialize());
-app.use(passport.session());
 
 function CreateUser(user) {
     return new Promise((resolve, reject) => {
@@ -192,15 +189,51 @@ function CreateComment(comment, review_id, access_token) {
     });
 }
 
-function CreateLike(review_id, access_token) {
+function CreateLike(review_id, is_liked, access_token) {
     return new Promise(async(resolve, reject) => {
         try {
             var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username,
                 table = "Likes",
                 columns = ["review_id", "creator_username"],
                 values = [review_id, "'" + username + "'"],
-                res = await db.createQuery(table, columns, values);
+                res = is_liked ? await db.createQuery(table, columns, values) : await db.deleteLikeQuery(table, columns, values);
             resolve(true);
+        } catch (error) {
+            console.error(error);
+            reject(error);
+        }
+    });
+}
+
+function GetUsersLikes(access_token) {
+    return new Promise(async(resolve, reject) => {
+        try {
+            var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username,
+                table = "Likes",
+                column = "creator_username",
+                value = "'" + username + "'",
+                res = await db.getQuery(table, column, value);
+            var reviewIds = res.map(row => row.review_id);
+            console.log("THIS IS REVIEWIDS " + JSON.stringify(reviewIds));
+            resolve(reviewIds);
+        } catch (error) {
+            console.error(error);
+            reject(error);
+        }
+    });
+}
+
+function GetUsersRate(access_token) {
+    return new Promise(async(resolve, reject) => {
+        try {
+            var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username,
+                table = "Ratings",
+                column = "creator_username",
+                value = "'" + username + "'",
+                res = await db.getQuery(table, column, value);
+            var reviewIds = res.map(row => row.review_id);
+            console.log("THIS IS REVIEWIDS " + JSON.stringify(reviewIds));
+            resolve(reviewIds);
         } catch (error) {
             console.error(error);
             reject(error);
@@ -221,7 +254,8 @@ function GetPopularReviews(page) {
             var ratings = await Promise.all(ratingPromises);
             reviews.forEach((obj, index) => {
                 obj.users_rating = ratings[index];
-                obj.like_count = likesRows[index].like_count;
+                const likeRow = likesRows.find(row => row.review_id === obj.review_id);
+                obj.like_count = likeRow ? likeRow.like_count : 0;
             });
             resolve(reviews);
         } catch (error) {
@@ -237,13 +271,13 @@ function GetLatestReviews(page) {
             var reviewsPerPage = 10,
                 offset = (parseInt(page) - 1) * reviewsPerPage,
                 likesRows = await db.getLikesRow(reviewsPerPage, offset),
-                reviewIds = likesRows.map(row => row.review_id),
                 reviews = await db.getReviews(reviewsPerPage, offset);
             var ratingPromises = reviews.map(obj => GetRating(obj.review_id));
             var ratings = await Promise.all(ratingPromises);
             reviews.forEach((obj, index) => {
                 obj.users_rating = ratings[index];
-                obj.like_count = likesRows[index].like_count;
+                const likeRow = likesRows.find(row => row.review_id === obj.review_id);
+                obj.like_count = likeRow ? likeRow.like_count : 0;
             });
             resolve(reviews);
         } catch (error) {
@@ -258,9 +292,9 @@ function GetReviewComments(review_id) {
         try {
             var table = "Comments",
                 column = "review_id",
-                value = review_id,
-                res = await db.getQuery(table, column, value)
-            resolve(res);
+                values = review_id,
+                res = await db.getQuery(table, column, values)
+            resolve(res || []);
         } catch (error) {
             console.error(error);
             reject(error);
@@ -293,6 +327,21 @@ function GetUserReviews(access_token, page) {
                 offset = (parseInt(page) - 1) * reviewsPerPage,
                 res = await db.getReviews(reviewsPerPage, offset, username);
             resolve(res);
+        } catch (error) {
+            console.error(error);
+            reject(error);
+        }
+    });
+}
+
+function GetCategories() {
+    return new Promise(async(resolve, reject) => {
+        try {
+            var table = "Categories",
+                res = await db.getQuery(table),
+                categories = res.map(obj => obj.category);
+            console.log(categories)
+            resolve(categories);
         } catch (error) {
             console.error(error);
             reject(error);
@@ -371,7 +420,9 @@ app.put("/review", async function(req, res) {
 
 app.delete("/review", async function(req, res) {
     try {
+        console.log(req)
         await AuthorizeUser(req.cookies.access_token);
+        await CreateLike(req.body.review_id, false, req.cookies.access_token)
         await DeleteReview(req.body);
         res.sendStatus(200);
     } catch (err) {
@@ -386,6 +437,10 @@ app.get("/reviews", async function(req, res) {
         var popularReviews = await GetPopularReviews(req.query.offset),
             latestReviews = await GetLatestReviews(req.query.offset);
         var reviews = { 'popularReviews': popularReviews, 'latestReviews': latestReviews };
+        if (req.cookies.access_token) {
+            reviews.liked_reviews = await GetUsersLikes(req.cookies.access_token);
+            reviews.rated_reviews = await GetUsersRate(req.cookies.access_token);
+        }
         res.status(200);
         res.send(reviews);
     } catch (err) {
@@ -412,6 +467,18 @@ app.get("/review/comments", async function(req, res) {
         var comments = await GetReviewComments(req.query.review_id);
         res.status(200);
         res.send(comments);
+    } catch (err) {
+        console.error(err);
+        res.status(err.status);
+        res.send(err.message);
+    }
+})
+
+app.get("/categories", async function(req, res) {
+    try {
+        var categories = await GetCategories();
+        res.status(200);
+        res.send(categories);
     } catch (err) {
         console.error(err);
         res.status(err.status);
@@ -446,14 +513,14 @@ app.post("/comment", async function(req, res) {
 app.post("/like", async function(req, res) {
     try {
         await AuthorizeUser(req.cookies.access_token);
-        await CreateLike(req.body.review_id, req.cookies.access_token);
+        await CreateLike(req.body.review_id, req.body.is_liked, req.cookies.access_token);
         res.sendStatus(200);
     } catch (err) {
         console.error(err);
         res.status(err.status);
         res.send(err.message);
     }
-})
+});
 
 app.listen(config["PORT"], () => {
     console.log(`Example app listening on port ${config["PORT"]}`)

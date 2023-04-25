@@ -3,7 +3,6 @@ import connection from "./DBConnection.js"
 const getQuery = function(table, columns = null, values = null) {
     return new Promise((resolve, reject) => {
         var sqlExtra = (columns === null && values === null) ? "" : ` WHERE ${columns} = ${values}`;
-        console.log("This is sqlExtra: " + sqlExtra)
         connection.query(`SELECT * FROM ${table}${sqlExtra};`,
             function(err, res) {
                 if (err) {
@@ -28,8 +27,9 @@ const getLikesRow = function(reviewsPerPage, offset) {
                     console.error(err);
                     reject(err);
                 } else {
-                    console.log("THERE " + JSON.stringify(res));
-                    resolve(res);
+                    const rows = res.map(row => ({...row, like_count: row.like_count !== undefined ? row.like_count : 0 }));
+                    console.log("THERE " + JSON.stringify(rows));
+                    resolve(rows);
                 }
             });
     });
@@ -37,7 +37,7 @@ const getLikesRow = function(reviewsPerPage, offset) {
 
 const getPopularReviews = function(review_ids) {
     return new Promise((resolve, reject) => {
-        connection.query(`SELECT * FROM Reviews WHERE review_id = ${review_ids};`,
+        connection.query(`SELECT * FROM Reviews WHERE review_id IN (${review_ids});`,
             function(err, res) {
                 if (err) {
                     console.error(err);
@@ -102,6 +102,21 @@ const updateQuery = function(table, checkCol, updCol, checkValue, updValue) {
     });
 }
 
+const deleteLikeQuery = function(table, columns, values) {
+    return new Promise((resolve, reject) => {
+        connection.query(`DELETE FROM ${table} WHERE ${columns[0]} = ${values[0]} AND ${columns[1]} = ${values[1]};`,
+            function(err, res) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                } else {
+                    console.log(res);
+                    resolve(res);
+                }
+            });
+    });
+}
+
 const deleteQuery = function(table, column, value) {
     return new Promise((resolve, reject) => {
         connection.query(`DELETE FROM ${table} WHERE ${column} = ${value};`,
@@ -122,6 +137,7 @@ export {
     createQuery,
     updateQuery,
     deleteQuery,
+    deleteLikeQuery,
     getReviews,
     getLikesRow,
     getPopularReviews

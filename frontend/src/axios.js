@@ -1,8 +1,20 @@
-import axios from "axios"
+import axios from "axios";
 
+const apiUrl = process.env.REACT_APP_SERVER_URL;
 const api = axios.create({
-    baseURL: process.env.REACT_APP_SERVER_URL,
+    baseURL: apiUrl,
     withCredentials: true
+});
+
+api.interceptors.request.use(config => {
+    if (!config.headers.Authorization) {
+        const token = localStorage.getItem("temitope");
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+
+    }
+    return config
 })
 
 export default api;

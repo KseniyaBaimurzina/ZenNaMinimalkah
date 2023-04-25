@@ -43,7 +43,7 @@ MYSQL_COMMAND="
     CREATE TABLE IF NOT EXISTS ReviewTags (
         review_id int NOT NULL, 
         tag VARCHAR(100) NOT NULL, 
-        FOREIGN KEY (review_id) REFERENCES Reviews(review_id), 
+        FOREIGN KEY (review_id) REFERENCES Reviews(review_id) ON DELETE CASCADE, 
         FOREIGN KEY (tag) REFERENCES Tags(tag), 
         PRIMARY KEY (review_id, tag)
     );
@@ -53,7 +53,7 @@ MYSQL_COMMAND="
         review_id int NOT NULL, 
         rate int NOT NULL, 
         FOREIGN KEY (creator_username) REFERENCES Users(username), 
-        FOREIGN KEY (review_id) REFERENCES Reviews(review_id), 
+        FOREIGN KEY (review_id) REFERENCES Reviews(review_id) ON DELETE CASCADE, 
         PRIMARY KEY (creator_username, review_id)
     );
 
@@ -61,7 +61,7 @@ MYSQL_COMMAND="
         creator_username VARCHAR(100) NOT NULL, 
         review_id int NOT NULL, 
         FOREIGN KEY (creator_username) REFERENCES Users(username), 
-        FOREIGN KEY (review_id) REFERENCES Reviews(review_id), 
+        FOREIGN KEY (review_id) REFERENCES Reviews(review_id) ON DELETE CASCADE, 
         PRIMARY KEY (creator_username, review_id)
     );
 
@@ -73,7 +73,7 @@ MYSQL_COMMAND="
         creation_time DATETIME DEFAULT CURRENT_TIMESTAMP, 
         PRIMARY KEY (comment_id), 
         FOREIGN KEY (creator_username) REFERENCES Users(username), 
-        FOREIGN KEY (review_id) REFERENCES Reviews(review_id)
+        FOREIGN KEY (review_id) REFERENCES Reviews(review_id) ON DELETE CASCADE
     );
 
     INSERT INTO Roles (role) VALUES ('admin'), ('user');
