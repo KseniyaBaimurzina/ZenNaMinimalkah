@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import usePostLike from "./ReviewLike";
 import usePostRating from "./ReviewRate";
 import { 
+    TextField,
     List, 
     ListItem, 
     ListItemText, 
@@ -17,7 +18,8 @@ import {
     Typography,
     Divider,
     Avatar,
-    IconButton
+    IconButton,
+    Button
 } from "@material-ui/core";
 import { Favorite as FavoriteIcon } from "@material-ui/icons";
 import Rating from '@material-ui/lab/Rating';
@@ -27,8 +29,10 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        overflowY: 'auto',
+        maxHeight: '100%',
     },
-        paper: {
+    paper: {
         width: '70%',
         height: '90%',
         maxWidth: '800px',
@@ -44,6 +48,7 @@ const ReviewModal = ({ review, open, onClose, liked, rated }) => {
     const classes = useStyles();
     const [comments, setComments] = useState([]);
     const [likedByCurrentUser, setLikedByCurrentUser] = useState(liked);
+    const [comment, setComment] = useState("");
 
     const postLike = usePostLike({
         review_id: review.review_id,
@@ -64,16 +69,29 @@ const ReviewModal = ({ review, open, onClose, liked, rated }) => {
         }
     }, [review.review_id]);
 
+    const publishComment = useCallback(async () => {
+        try {
+            await api.post("comment", {
+                review_id: review.review_id, comment: comment
+            });
+            setComment("");
+        } catch (err) {
+            console.error(err);
+        }
+    }, [comment, review.review_id]);
+
     const handleLikeButtonClick = useCallback(() => {
         postLike.postLike();
         setLikedByCurrentUser(!likedByCurrentUser);
     }, [likedByCurrentUser, postLike]);
 
     useEffect(() => {
-        if (open) {
+        getComments();
+        const interval = setInterval(() => {
             getComments();
-        }
-    }, [open, getComments]);
+        }, 3000);
+        return () => clearInterval(interval);
+    }, [getComments]);
 
     return (
         <Modal
@@ -137,6 +155,19 @@ const ReviewModal = ({ review, open, onClose, liked, rated }) => {
                             ))}
                         </List>
                     )}
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        id="comment"
+                        label="Comment"
+                        multiline
+                        minRows={4}
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                    />
+                    <Button color="primary" onClick={publishComment}>
+                        Publish
+                    </Button>
                 </CardContent>
             </Card>
             </div>

@@ -11,9 +11,7 @@ const Reviews = () => {
 
     const getReviews = useCallback(async () => {
         try {
-            const res = await api.get("/reviews", {
-                params: { offset: 1 },                  //Make offset change with scrolling
-            });
+            const res = await api.get("/reviews");
             setPopularReviews(res.data.popularReviews);
             setLatestReviews(res.data.latestReviews);
             if (res.data.hasOwnProperty("liked_reviews"))

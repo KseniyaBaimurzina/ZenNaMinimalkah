@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useLocation } from "react-router-dom";
 import {
     TextField,
     Button,
@@ -12,16 +11,14 @@ import {
 } from "@material-ui/core";
 import api from "./axios";
 
-const ReviewPage = () => {
-    const location = useLocation();
-    const review = location.state?.review;
-    const review_id = review?.review_id;
+const ReviewUpdatePage = (review=null) => {
+    const review_id = review.review_id;
     const [categories, setCategories] = useState([]);
-    const [title, setTitle] = useState(review?.title || "");
-    const [category, setCategory] = useState(review?.category || "");
-    const [productName, setProductName] = useState(review?.product_name || "");
-    const [content, setContent] = useState(review?.content || "");
-    const [rating, setRating] = useState(review?.rate || "");
+    const [title, setTitle] = useState(review.title);
+    const [category, setCategory] = useState(review.category);
+    const [productName, setProductName] = useState(review.product_name);
+    const [content, setContent] = useState(review.content);
+    const [rating, setRating] = useState(review.rate);
 
     const getCategories = useCallback(async () => {
         try {
@@ -143,7 +140,7 @@ const ReviewPage = () => {
                 ))}
             </Select>
             </FormControl>
-            <Button variant="contained" color="primary" onClick={review===null ? handlePublish : handleUpd}>
+            <Button variant="contained" color="primary" onClick={handlePublish}>
                 Publish
             </Button>
         </form>
@@ -151,4 +148,4 @@ const ReviewPage = () => {
     );
 };
 
-export default ReviewPage;
+export default ReviewUpdatePage;

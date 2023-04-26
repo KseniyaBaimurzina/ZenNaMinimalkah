@@ -15,13 +15,11 @@ const getQuery = function(table, columns = null, values = null) {
     });
 }
 
-const getLikesRow = function(reviewsPerPage, offset) {
+const getLikesRow = function() {
     return new Promise((resolve, reject) => {
         connection.query(`SELECT review_id, COUNT(*) AS like_count FROM Likes ` +
             `GROUP BY review_id ` +
-            `ORDER BY like_count DESC ` +
-            `LIMIT ${reviewsPerPage} ` +
-            `OFFSET ${offset};`,
+            `ORDER BY like_count DESC;`,
             function(err, res) {
                 if (err) {
                     console.error(err);
@@ -37,6 +35,7 @@ const getLikesRow = function(reviewsPerPage, offset) {
 
 const getPopularReviews = function(review_ids) {
     return new Promise((resolve, reject) => {
+        if (review_ids.length === 0) resolve([])
         connection.query(`SELECT * FROM Reviews WHERE review_id IN (${review_ids});`,
             function(err, res) {
                 if (err) {
@@ -50,14 +49,12 @@ const getPopularReviews = function(review_ids) {
     });
 }
 
-const getReviews = function(reviewsPerPage, offset, username = null) {
+const getReviews = function(username = null) {
     return new Promise((resolve, reject) => {
         var sqlExtra = username === null ? "" : ` WHERE creator_username = '${username}'`
         connection.query(`SELECT * ` +
             `FROM Reviews${sqlExtra} ` +
-            `ORDER BY creation_time DESC ` +
-            `LIMIT ${reviewsPerPage} ` +
-            `OFFSET ${offset};`,
+            `ORDER BY creation_time DESC;`,
             function(err, res) {
                 if (err) {
                     console.error(err);

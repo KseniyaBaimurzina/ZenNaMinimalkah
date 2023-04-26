@@ -10,7 +10,6 @@ import usePostRating from "./ReviewRate";
 const ReviewPost = ({ review, liked, rated }) => {
     const [openReview, setOpenReview] = useState(false);
     const [likedByCurrentUser, setLikedByCurrentUser] = useState(liked);
-    console.log(likedByCurrentUser);
 
     const { postRating } = usePostRating({ review_id: review.review_id });
 
@@ -55,7 +54,7 @@ const ReviewPost = ({ review, liked, rated }) => {
                         disabled={rated}
                     />
                     </Typography>
-                    <div onClick={handleOpen}>
+                    <div onClick={handleOpen} style={{ cursor: "pointer" }}>
                         <Typography variant="subtitle1">{review.product_name}</Typography>
                         <Typography variant="body1">{review.content}</Typography>
                         <Typography variant="h6">Rating: {review.rate}</Typography>

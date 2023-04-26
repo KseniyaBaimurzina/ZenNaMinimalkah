@@ -241,13 +241,10 @@ function GetUsersRate(access_token) {
     });
 }
 
-function GetPopularReviews(page) {
+function GetPopularReviews() {
     return new Promise(async(resolve, reject) => {
         try {
-            console.log(page + '\n' + typeof page)
-            var reviewsPerPage = 10,
-                offset = (parseInt(page) - 1) * reviewsPerPage,
-                likesRows = await db.getLikesRow(reviewsPerPage, offset),
+            var likesRows = await db.getLikesRow(),
                 reviewIds = likesRows.map(row => row.review_id);
             var reviews = await db.getPopularReviews(reviewIds),
                 ratingPromises = reviews.map(obj => GetRating(obj.review_id));
@@ -265,13 +262,11 @@ function GetPopularReviews(page) {
     });
 }
 
-function GetLatestReviews(page) {
+function GetLatestReviews() {
     return new Promise(async(resolve, reject) => {
         try {
-            var reviewsPerPage = 10,
-                offset = (parseInt(page) - 1) * reviewsPerPage,
-                likesRows = await db.getLikesRow(reviewsPerPage, offset),
-                reviews = await db.getReviews(reviewsPerPage, offset);
+            var likesRows = await db.getLikesRow(),
+                reviews = await db.getReviews();
             var ratingPromises = reviews.map(obj => GetRating(obj.review_id));
             var ratings = await Promise.all(ratingPromises);
             reviews.forEach((obj, index) => {
@@ -319,13 +314,11 @@ function GetRating(review_id) {
     });
 }
 
-function GetUserReviews(access_token, page) {
+function GetUserReviews(access_token) {
     return new Promise(async(resolve, reject) => {
         try {
             var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username,
-                reviewsPerPage = 10,
-                offset = (parseInt(page) - 1) * reviewsPerPage,
-                res = await db.getReviews(reviewsPerPage, offset, username);
+                res = await db.getReviews(username);
             resolve(res);
         } catch (error) {
             console.error(error);
@@ -452,7 +445,7 @@ app.get("/reviews", async function(req, res) {
 
 app.get("/user/reviews", async function(req, res) {
     try {
-        var userReviews = await GetUserReviews(req.cookies.access_token, req.query.offset);
+        var userReviews = await GetUserReviews(req.cookies.access_token);
         res.status(200);
         res.send(userReviews);
     } catch (err) {
