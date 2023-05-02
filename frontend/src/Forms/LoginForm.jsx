@@ -3,56 +3,56 @@ import { fetchToken, setToken } from "../Auth";
 import { useState } from "react";
 import api from "../axios";
 import {
-  Container,
-  Typography,
-  TextField,
-  Button,
-  Grid,
-  Link,
-  CircularProgress,
-  Box
+    Container,
+    Typography,
+    TextField,
+    Button,
+    Grid,
+    Link,
+    CircularProgress,
+    Box
 } from "@material-ui/core";
 
 export default function Login() {
-  const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
-  const registration = () => {
-    localStorage.removeItem("temitope");
-    navigate("/registration");
-  };
+    const registration = () => {
+        localStorage.removeItem("temitope");
+        navigate("/registration");
+    };
 
-  if (fetchToken()) {
-    return <Navigate to="/reviews" />;
-  }
-
-  const loginCheck = () => {
-    if (password === "" || username === "") {
-      setErrorMessage("Please, fill in the input fields");
-      return errorMessage;
-    } else {
-      setIsLoading(true);
-      console.log({ username: username, password: password })
-      api.post("/login", { username: username, password: password })
-        .then(function (response) {
-          if (response.status === 200) {
-            setToken(response.data.access_token);
-            navigate("/reviews");
-          }
-        })
-        .catch(function (error) {
-          if (error.response.status === 401) {
-            setErrorMessage("Incorrect username or password. Please, try again");
-          } else {
-            setErrorMessage(error.response.data);
-          }
-        })
-        .finally(() => setIsLoading(false));
+    if (fetchToken()) {
+        return <Navigate to="/" />;
     }
-  };
+
+    const loginCheck = () => {
+        if (password === "" || username === "") {
+            setErrorMessage("Please, fill in the input fields");
+            return errorMessage;
+        } else {
+        setIsLoading(true);
+        console.log({ username: username, password: password })
+        api.post("/login", { username: username, password: password })
+            .then(function (response) {
+            if (response.status === 200) {
+                setToken(response.data.access_token);
+                navigate("/");
+            }
+            })
+            .catch(function (error) {
+            if (error.response.status === 401) {
+                setErrorMessage("Incorrect username or password. Please, try again");
+            } else {
+                setErrorMessage(error.response.data);
+            }
+            })
+            .finally(() => setIsLoading(false));
+        }
+    };
 
     return (
         <Container component="main" maxWidth="xs">

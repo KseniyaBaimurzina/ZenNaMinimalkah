@@ -3,6 +3,7 @@ import { Container, Typography, Button } from "@material-ui/core";
 import ReviewPost from "./ReviewPost";
 import api from "./axios";
 import { useNavigate } from "react-router-dom";
+import Header from "./Header";
 
 const UserPage = () => {
     const navigate = useNavigate();
@@ -14,6 +15,10 @@ const UserPage = () => {
 
     const handleUpdateReview = (review) => {
         navigate("/create-review", {state:{review: review}})
+    }
+
+    const mainPage = () => {
+        navigate("/");
     }
 
     const getUserReviews = useCallback(async () => {
@@ -47,26 +52,32 @@ const UserPage = () => {
     }, [getUserReviews]);
 
     return (
-        <Container maxWidth="md">
-            <Button 
-                variant="contained"
-                color="primary" 
-                onClick={handleCreateReview}>
-                    Create Review
-            </Button>
-            <Typography variant="h4">My Reviews</Typography>
-            {userReviews.map((review) => (
-                <div key={review.review_id}>
-                    <ReviewPost review={review} liked={review.liked} />
-                    <Button variant="contained" color="secondary" onClick={() => handleDelete(review.review_id)}>
-                        Delete
-                    </Button>
-                    <Button variant="contained" color="primary" onClick={() => handleUpdateReview(review)}>
-                        Edit
-                    </Button>
-                </div>
-            ))}
-        </Container>
+        <div>
+            <Header />
+            <div style={{float: 'right', padding: '1em'}}>
+                <Button variant="contained" color="primary" onClick={mainPage}>Main Page</Button>
+            </div>
+            <Container maxWidth="md">
+                <Button 
+                    variant="contained"
+                    color="primary" 
+                    onClick={handleCreateReview}>
+                        Create Review
+                </Button>
+                <Typography variant="h4">My Reviews</Typography>
+                {userReviews.map((review) => (
+                    <div key={review.review_id}>
+                        <ReviewPost review={review} liked={review.liked} />
+                        <Button variant="contained" color="secondary" onClick={() => handleDelete(review.review_id)}>
+                            Delete
+                        </Button>
+                        <Button variant="contained" color="primary" onClick={() => handleUpdateReview(review)}>
+                            Edit
+                        </Button>
+                    </div>
+                ))}
+            </Container>
+        </div>
     );
 };
 

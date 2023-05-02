@@ -39,6 +39,12 @@ async function createIndex(indexName) {
                                 text: { type: 'text' },
                                 creation_time: { type: 'date' }
                             }
+                        },
+                        tags: {
+                            properties: {
+                                tag: { type: 'text' },
+                                review_id: { type: 'integer' }
+                            }
                         }
                     }
                 }
@@ -59,6 +65,10 @@ async function updateIndex(indexName, data) {
             .filter(comment => comment.review_id === review.review_id)
             .map(comment => comment.comment_id);
 
+        const tags = data.tags
+            .filter(tag => tag.review_id === review.review_id)
+            .map(tag => tag.tag);
+
         body.push({ update: { _index: indexName, _id: review.review_id } });
         body.push({
             doc: {
@@ -71,7 +81,8 @@ async function updateIndex(indexName, data) {
                 rate: review.rate,
                 image_path: review.image_path,
                 creation_time: review.creation_time,
-                comments: commentIds
+                comments: commentIds,
+                tags: tags
             },
             upsert: {
                 review_id: review.review_id,
@@ -83,25 +94,32 @@ async function updateIndex(indexName, data) {
                 rate: review.rate,
                 image_path: review.image_path,
                 creation_time: review.creation_time,
-                comments: commentIds
+                comments: commentIds,
+                tags: tags
             }
         });
     });
 
     data.comments.forEach(comment => {
+        const tags = data.tags
+            .filter(tag => tag.review_id === comment.review_id)
+            .map(tag => tag.tag);
+
         body.push({ update: { _index: indexName, _id: comment.comment_id } });
         body.push({
             doc: {
                 creator_username: comment.creator_username,
                 review_id: comment.review_id,
                 text: comment.text,
-                creation_time: comment.creation_time
+                creation_time: comment.creation_time,
+                tags: tags
             },
             upsert: {
                 creator_username: comment.creator_username,
                 review_id: comment.review_id,
                 text: comment.text,
-                creation_time: comment.creation_time
+                creation_time: comment.creation_time,
+                tags: tags
             }
         });
     });
@@ -110,7 +128,7 @@ async function updateIndex(indexName, data) {
     console.log(`Index ${indexName} successfully updated.`);
 }
 
-async function indexReviewsAndComments() {
+async function indexDB() {
     try {
         console.log("indexation started");
         const reviews = await new Promise((resolve, reject) => {
@@ -133,9 +151,19 @@ async function indexReviewsAndComments() {
             });
         });
 
+        const tags = await new Promise((resolve, reject) => {
+            connection.query('SELECT * FROM ReviewTags', (error, results, fields) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(results);
+                }
+            });
+        })
+
         const indexName = "reviews_2023-04-26";
         const indexExists = await checkIndexExists(indexName);
-        const data = { reviews: reviews, comments: comments }
+        const data = { reviews: reviews, comments: comments, tags: tags }
 
         if (indexExists) {
             updateIndex(indexName, data)
@@ -160,7 +188,8 @@ async function indexReviewsAndComments() {
                         rate: review.rate,
                         image_path: review.image_path,
                         creation_time: review.creation_time,
-                        comments: commentIds
+                        comments: commentIds,
+                        tags: review.tags
                     },
                     upsert: {
                         review_id: review.review_id,
@@ -172,7 +201,8 @@ async function indexReviewsAndComments() {
                         rate: review.rate,
                         image_path: review.image_path,
                         creation_time: review.creation_time,
-                        comments: commentIds
+                        comments: commentIds,
+                        tags: review.tags
                     }
                 });
             });
@@ -201,4 +231,4 @@ async function indexReviewsAndComments() {
     }
 }
 
-export default indexReviewsAndComments;
+export default indexDB;

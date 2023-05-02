@@ -16,10 +16,10 @@ export function RequireToken({children}){
     let location = useLocation();
     console.log("Check Auth");
 
-    if(!auth){
-        console.log("Unauthorized");
-        return <Navigate to='/login' state ={{from : location}}/>;
-    }
+    // if(!auth){
+    //     console.log("Unauthorized");
+    //     return <Navigate to='/login' state ={{from : location}}/>;
+    // }
 
     return children;
 }

@@ -1,6 +1,9 @@
-import * as db from "DBRequests.js";
-import Comment from "./DBModels/user.js";
+import * as db from "./DBRequests.js";
+import Comment from "./DBModels/comment.js";
 import jwt from "jsonwebtoken";
+import * as dotenv from "dotenv";
+
+const config = dotenv.config(".env").parsed;
 
 function CreateComment(comment, review_id, access_token) {
     return new Promise(async(resolve, reject) => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
     TextField,
     Button,
@@ -14,6 +14,7 @@ import api from "./axios";
 
 const ReviewPage = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const review = location.state?.review;
     const review_id = review?.review_id;
     const [categories, setCategories] = useState([]);
@@ -41,6 +42,10 @@ const ReviewPage = () => {
         getCategories();
     }, [getCategories]);
 
+    const goToMyPage = () => {
+        navigate("/user/reviews")
+    }
+
     const handlePublish = useCallback(async () => {
         try {
             await api.post("/review", {
@@ -55,6 +60,7 @@ const ReviewPage = () => {
             setProductName("");
             setContent("");
             setRating("");
+            goToMyPage();
         } catch (err) {
             console.error(err);
         }
@@ -75,6 +81,7 @@ const ReviewPage = () => {
             setProductName("");
             setContent("");
             setRating("");
+            goToMyPage()
         } catch (err) {
             console.error(err);
         }
@@ -82,6 +89,9 @@ const ReviewPage = () => {
 
     return (
         <Container maxWidth="md">
+            <div style={{float: 'right', padding: '1em'}}>
+                <Button variant="contained" color="primary" onClick={goToMyPage}>My Page</Button>
+            </div>
         <Typography variant="h4">Write a Review</Typography>
         <form>
             <TextField

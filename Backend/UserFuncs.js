@@ -1,7 +1,10 @@
-import * as db from "DBRequests.js";
+import * as db from "./DBRequests.js";
 import User from "./DBModels/user.js";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import * as dotenv from "dotenv";
+
+const config = dotenv.config(".env").parsed;
 
 function CreateUser(user) {
     return new Promise((resolve, reject) => {
@@ -24,6 +27,23 @@ function CreateUser(user) {
     });
 }
 
+function GetUsersList(user) {
+    return new Promise(async(resolve, reject) => {
+        try {
+            if (user.role === "admin") {
+                var res = await db.getQuery("Users");
+                resolve(res);
+            } else {
+                reject(false);
+            }
+        } catch (error) {
+            console.error(error);
+            reject(error);
+        }
+    });
+}
+
+
 function GetHashedPassword(password) {
     var key = config["SECRET_KEY"];
     var hmac = crypto.createHmac('sha256', key);
@@ -45,9 +65,9 @@ function AuthenticateUser(username, password) {
             column = "username";
         db.getQuery(table, column, username)
             .then(res => {
-                console.log("this is response: ", res[0].password);
+                console.log("this is response: ", res[0].role);
                 if (VerifyPassword(password, res[0].password)) {
-                    resolve(true);
+                    resolve(res[0].role);
                 } else {
                     reject(false);
                 }
@@ -58,9 +78,32 @@ function AuthenticateUser(username, password) {
     })
 }
 
+function AuthorizeUser(access_token) {
+    return new Promise((resolve, reject) => {
+        jwt.verify(access_token, config["SECRET_JWT_KEY"], (err, verifyRes) => {
+            if (err) {
+                reject(err);
+            } else {
+                var table = "Users",
+                    column = "username",
+                    username = "'" + verifyRes.username + "'";
+                db.getQuery(table, column, username)
+                    .then(res => {
+                        resolve(res[0]);
+                    })
+                    .catch(err => {
+                        reject(false);
+                    });
+            }
+        });
+    });
+}
+
 export {
     CreateUser,
+    GetUsersList,
     GenerateJWT,
     VerifyPassword,
     AuthenticateUser,
+    AuthorizeUser
 }

@@ -33,10 +33,18 @@ const getLikesRow = function() {
     });
 }
 
-const getPopularReviews = function(review_ids) {
+const getPopularReviews = function() {
     return new Promise((resolve, reject) => {
-        if (review_ids.length === 0) resolve([])
-        connection.query(`SELECT * FROM Reviews WHERE review_id IN (${review_ids});`,
+        // if (review_ids.length === 0) resolve([])
+        connection.query(`SELECT Reviews.*,` +
+            `COUNT(Likes.review_id) AS like_count, ` +
+            `COALESCE(AVG(Ratings.rate), 0) AS users_rating ` +
+            `FROM Reviews ` +
+            `LEFT JOIN Likes ON Reviews.review_id = Likes.review_id ` +
+            `LEFT JOIN Ratings ON Reviews.review_id = Ratings.review_id ` +
+            `GROUP BY Reviews.review_id ` +
+            `HAVING like_count > 0 ` +
+            `ORDER BY like_count DESC, Reviews.creation_time DESC;`,
             function(err, res) {
                 if (err) {
                     console.error(err);
@@ -52,9 +60,20 @@ const getPopularReviews = function(review_ids) {
 const getReviews = function(username = null) {
     return new Promise((resolve, reject) => {
         var sqlExtra = username === null ? "" : ` WHERE creator_username = '${username}'`
-        connection.query(`SELECT * ` +
-            `FROM Reviews${sqlExtra} ` +
-            `ORDER BY creation_time DESC;`,
+        connection.query(`SELECT Reviews.*, COALESCE(Likes.likes_count, 0) AS like_count, ` +
+            `COALESCE(Ratings.users_rating, 0) AS users_rating ` +
+            `FROM Reviews ` +
+            `LEFT JOIN ( ` +
+            `SELECT review_id, COUNT(*) AS likes_count ` +
+            `FROM Likes ` +
+            `GROUP BY review_id ` +
+            `) AS Likes ON Reviews.review_id = Likes.review_id ` +
+            `LEFT JOIN ( ` +
+            `SELECT review_id, AVG(rate) AS users_rating, COUNT(*) AS rating_count ` +
+            `FROM Ratings ` +
+            `GROUP BY review_id ` +
+            `) AS Ratings ON Reviews.review_id = Ratings.review_id ` +
+            `${sqlExtra} ORDER BY Reviews.creation_time DESC;`,
             function(err, res) {
                 if (err) {
                     console.error(err);
@@ -82,6 +101,35 @@ const createQuery = function(table, column, value) {
     });
 }
 
+const createTagsQuery = function(tags) {
+    return new Promise((resolve, reject) => {
+        connection.query(`INSERT IGNORE INTO Tags (tag) VALUES ${tags};`,
+            function(err, res) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                } else {
+                    console.log(res);
+                    resolve(res);
+                }
+            });
+    });
+}
+
+const createRevTagsQuery = function(table, column, value) {
+    return new Promise((resolve, reject) => {
+        connection.query(`INSERT INTO ${table} (${column}) VALUES ${value};`,
+            function(err, res) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                } else {
+                    console.log(res);
+                    resolve(res);
+                }
+            });
+    });
+}
 const updateQuery = function(table, checkCol, updCol, checkValue, updValue) {
     return new Promise((resolve, reject) => {
         var updStr = updCol.map((item, index) => item + " = '" + updValue[index] + "'").join(', ');
@@ -132,6 +180,8 @@ const deleteQuery = function(table, column, value) {
 export {
     getQuery,
     createQuery,
+    createTagsQuery,
+    createRevTagsQuery,
     updateQuery,
     deleteQuery,
     deleteLikeQuery,

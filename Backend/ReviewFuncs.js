@@ -1,18 +1,27 @@
 import Review from "./DBModels/review.js";
 import jwt from "jsonwebtoken";
-import * as db from "DBRequests.js";
-import { GetRating } from "./RatingFuncs.js";
+import * as db from "./DBRequests.js";
+import { Client } from '@elastic/elasticsearch';
+import * as dotenv from "dotenv";
 
-function CreateReview(access_token, review) {
+const config = dotenv.config(".env").parsed;
+
+const client = new Client({ node: config["ELASTICSEARCH_SERVER"] });
+
+function CreateReview(access_token, user, review) {
     return new Promise(async(resolve, reject) => {
         try {
-            var rev = review;
-            rev["creator_username"] = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username;
+            var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username;
+            var rev = review.review;
+            rev["creator_username"] = user.role === "admin" ? review.review.creator_username : username;
             var newReview = new Review(rev),
-                table = "Reviews",
-                columns = Object.keys(rev),
-                values = '"' + Object.values(rev).join('", "') + '"',
-                res = await db.createQuery(table, columns, values);
+                res = await db.createQuery("Reviews", Object.keys(rev), '"' + Object.values(rev).join('", "') + '"');
+            if (review.tags) {
+                var tags = review.tags.map(tag => `('${tag}')`).join(",");
+                await db.createTagsQuery(tags);
+                tags = review.tags.map(tag => `('${res.insertId}', '${tag}')`).join(',');
+                await db.createRevTagsQuery("ReviewTags", "review_id, tag", tags);
+            }
             resolve(true);
         } catch (error) {
             console.error(error);
@@ -21,20 +30,26 @@ function CreateReview(access_token, review) {
     });
 }
 
-function UpdateReview(access_token, review) {
+function UpdateReview(access_token, user, review) {
     return new Promise(async(resolve, reject) => {
         try {
-            var rev = review;
-            rev["creator_username"] = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username;
-            var revToUpd = new Review(rev),
-                table = "Reviews",
-                checkCol = "review_id",
-                checkValue = revToUpd.review_id;
-            delete rev.review_id;
-            var updCol = Object.keys(rev),
-                updValue = Object.values(rev),
-                res = await db.updateQuery(table, checkCol, updCol, checkValue, updValue);
-            resolve(true);
+            var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username;
+            if (user.role === "admin" || user.username === username) {
+                var rev = review;
+                if (review.tags) {
+                    var tags = review.tags.map(tag => `('${tag}')`).join(",");
+                    await db.createTagsQuery(tags);
+                    tags = review.tags.map(tag => `('${review.review_id}', '${tag}')`).join(',');
+                    await db.deleteQuery("ReviewTags", "review_id", review.review_id);
+                    await db.createRevTagsQuery("ReviewTags", "review_id, tag", tags);
+                }
+                delete rev.tags;
+                var revToUpd = new Review(rev);
+                await db.updateQuery("Reviews", "review_id", Object.keys(rev), revToUpd.review_id, Object.values(rev));
+                resolve(true);
+            } else {
+                reject(false);
+            }
         } catch (error) {
             console.error(error);
             reject(error);
@@ -42,14 +57,19 @@ function UpdateReview(access_token, review) {
     });
 }
 
-function DeleteReview(review) {
+function DeleteReview(access_token, user, review) {
     return new Promise(async(resolve, reject) => {
         try {
-            var table = "Reviews",
-                column = "review_id",
-                value = review.review_id,
-                res = await db.deleteQuery(table, column, value);
-            resolve(true);
+            var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username;
+            if (user.role === "admin" || user.username === username) {
+                var table = "Reviews",
+                    column = "review_id",
+                    value = review.review_id,
+                    res = await db.deleteQuery(table, column, value);
+                resolve(true);
+            } else {
+                reject(false);
+            }
         } catch (error) {
             console.error(error);
             reject(error);
@@ -60,17 +80,9 @@ function DeleteReview(review) {
 function GetPopularReviews() {
     return new Promise(async(resolve, reject) => {
         try {
-            var likesRows = await db.getLikesRow(),
-                reviewIds = likesRows.map(row => row.review_id);
-            var reviews = await db.getPopularReviews(reviewIds),
-                ratingPromises = reviews.map(obj => GetRating(obj.review_id));
-            var ratings = await Promise.all(ratingPromises);
-            reviews.forEach((obj, index) => {
-                obj.users_rating = ratings[index];
-                const likeRow = likesRows.find(row => row.review_id === obj.review_id);
-                obj.like_count = likeRow ? likeRow.like_count : 0;
-            });
-            resolve(reviews);
+            var reviews = await db.getPopularReviews();
+            var reviewsWithTags = GetReviewTags(reviews);
+            resolve(reviewsWithTags);
         } catch (error) {
             console.error(error);
             reject(error);
@@ -78,19 +90,28 @@ function GetPopularReviews() {
     });
 }
 
+async function GetReviewTags(reviews) {
+    try {
+        var tags = await GetTags("ReviewTags");
+        reviews.forEach((review) => {
+            const foundTags = tags.filter((tag) => tag.review_id === review.review_id);
+            review.review_tags = [];
+            foundTags.forEach((foundTag) => {
+                review.review_tags.push(foundTag.tag);
+            });
+        });
+        return reviews;
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
 function GetLatestReviews() {
     return new Promise(async(resolve, reject) => {
         try {
-            var likesRows = await db.getLikesRow(),
-                reviews = await db.getReviews();
-            var ratingPromises = reviews.map(obj => GetRating(obj.review_id));
-            var ratings = await Promise.all(ratingPromises);
-            reviews.forEach((obj, index) => {
-                obj.users_rating = ratings[index];
-                const likeRow = likesRows.find(row => row.review_id === obj.review_id);
-                obj.like_count = likeRow ? likeRow.like_count : 0;
-            });
-            resolve(reviews);
+            var reviews = await db.getReviews();
+            var reviewsWithTags = GetReviewTags(reviews);
+            resolve(reviewsWithTags);
         } catch (error) {
             console.error(error);
             reject(error);
@@ -102,8 +123,9 @@ function GetUserReviews(access_token) {
     return new Promise(async(resolve, reject) => {
         try {
             var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username,
-                res = await db.getReviews(username);
-            resolve(res);
+                reviews = await db.getReviews(username);
+            var reviewsWithTags = GetReviewTags(reviews);
+            resolve(reviewsWithTags);
         } catch (error) {
             console.error(error);
             reject(error);
@@ -126,23 +148,45 @@ function GetCategories() {
     });
 }
 
-function searchIndex(query) {
-    return new Promise((resolve, reject) => {
-        client.search({
-            index: 'reviews_2023-04-26',
-            body: {
-                query: {
-                    match: {
-                        field_name: query
-                    }
-                }
-            }
-        }).then((response) => {
-            resolve(response.hits.hits.map((hit) => hit._source));
-        }).catch((error) => {
-            console.error(`Error searching index: ${error}`);
+function GetTags(table) {
+    return new Promise(async(resolve, reject) => {
+        try {
+            var res = await db.getQuery(table);
+            resolve(res);
+        } catch (error) {
+            console.error(error);
             reject(error);
-        });
+        }
+    });
+}
+
+function SearchIndex(query) {
+    return new Promise(async(resolve, reject) => {
+        try {
+            const result = await client.search({
+                index: 'reviews_2023-04-26',
+                body: {
+                    query: {
+                        multi_match: {
+                            query: query,
+                            fields: ['content', 'creator_username', 'title', 'product_name', 'comments.text', 'tags.tag']
+                        }
+                    },
+                },
+            });
+            var data = await client.search({
+                index: 'reviews_2023-04-26',
+                body: {
+                    query: {
+                        match_all: {}
+                    }
+                },
+            });
+            console.log(data.hits.hits.map((hit) => hit._source));
+            resolve(result.hits.hits.map((hit) => hit._source));
+        } catch (error) {
+            reject(error);
+        }
     });
 }
 
@@ -154,5 +198,6 @@ export {
     GetLatestReviews,
     GetUserReviews,
     GetCategories,
-    searchIndex
+    SearchIndex,
+    GetTags
 }

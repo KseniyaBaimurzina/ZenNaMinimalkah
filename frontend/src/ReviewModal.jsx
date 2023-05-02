@@ -91,7 +91,7 @@ const ReviewModal = ({ review, open, onClose, liked, rated }) => {
             getComments();
         }, 3000);
         return () => clearInterval(interval);
-    }, [getComments]);
+    }, []);
 
     return (
         <Modal
