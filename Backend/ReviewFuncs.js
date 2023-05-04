@@ -13,7 +13,11 @@ function CreateReview(access_token, user, review) {
         try {
             var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username;
             var rev = review.review;
-            rev["creator_username"] = user.role === "admin" ? review.review.creator_username : username;
+            if (user.role === "user") {
+                rev["creator_username"] = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username;
+            } else {
+                rev["creator_username"] = review.username;
+            }
             var newReview = new Review(rev),
                 res = await db.createQuery("Reviews", Object.keys(rev), '"' + Object.values(rev).join('", "') + '"');
             if (review.tags) {
@@ -35,17 +39,18 @@ function UpdateReview(access_token, user, review) {
         try {
             var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username;
             if (user.role === "admin" || user.username === username) {
-                var rev = review;
+                var rev = review.review;
                 if (review.tags) {
                     var tags = review.tags.map(tag => `('${tag}')`).join(",");
                     await db.createTagsQuery(tags);
-                    tags = review.tags.map(tag => `('${review.review_id}', '${tag}')`).join(',');
-                    await db.deleteQuery("ReviewTags", "review_id", review.review_id);
+                    console.log(review)
+                    tags = review.tags.map(tag => `('${review.review.review_id}', '${tag}')`).join(',');
+                    await db.deleteQuery("ReviewTags", "review_id", review.review.review_id);
                     await db.createRevTagsQuery("ReviewTags", "review_id, tag", tags);
                 }
-                delete rev.tags;
-                var revToUpd = new Review(rev);
-                await db.updateQuery("Reviews", "review_id", Object.keys(rev), revToUpd.review_id, Object.values(rev));
+                var revToUpd = new Review(rev),
+                    colsVals = Object.entries(rev).map(([key, value]) => `${key} = '${value}'`).join(', ')
+                await db.updateQuery("Reviews", "review_id", revToUpd.review_id, colsVals);
                 resolve(true);
             } else {
                 reject(false);
@@ -119,11 +124,10 @@ function GetLatestReviews() {
     });
 }
 
-function GetUserReviews(access_token) {
+function GetUserReviews(username) {
     return new Promise(async(resolve, reject) => {
         try {
-            var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username,
-                reviews = await db.getReviews(username);
+            var reviews = await db.getReviews(username);
             var reviewsWithTags = GetReviewTags(reviews);
             resolve(reviewsWithTags);
         } catch (error) {
@@ -139,7 +143,6 @@ function GetCategories() {
             var table = "Categories",
                 res = await db.getQuery(table),
                 categories = res.map(obj => obj.category);
-            console.log(categories)
             resolve(categories);
         } catch (error) {
             console.error(error);
@@ -182,7 +185,6 @@ function SearchIndex(query) {
                     }
                 },
             });
-            console.log(data.hits.hits.map((hit) => hit._source));
             resolve(result.hits.hits.map((hit) => hit._source));
         } catch (error) {
             reject(error);

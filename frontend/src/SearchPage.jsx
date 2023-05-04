@@ -8,6 +8,7 @@ import React from 'react';
 const SearchResult = () => {
     const location = useLocation();
     const { result, query } = location.state;
+    console.log(result)
     const navigate = useNavigate();
     
     const mainPage = () => {

@@ -40,7 +40,7 @@ async function createIndex(indexName) {
                                 creation_time: { type: 'date' }
                             }
                         },
-                        tags: {
+                        review_tags: {
                             properties: {
                                 tag: { type: 'text' },
                                 review_id: { type: 'integer' }
@@ -82,7 +82,7 @@ async function updateIndex(indexName, data) {
                 image_path: review.image_path,
                 creation_time: review.creation_time,
                 comments: commentIds,
-                tags: tags
+                review_tags: tags
             },
             upsert: {
                 review_id: review.review_id,
@@ -95,7 +95,7 @@ async function updateIndex(indexName, data) {
                 image_path: review.image_path,
                 creation_time: review.creation_time,
                 comments: commentIds,
-                tags: tags
+                review_tags: tags
             }
         });
     });
@@ -112,14 +112,14 @@ async function updateIndex(indexName, data) {
                 review_id: comment.review_id,
                 text: comment.text,
                 creation_time: comment.creation_time,
-                tags: tags
+                review_tags: tags
             },
             upsert: {
                 creator_username: comment.creator_username,
                 review_id: comment.review_id,
                 text: comment.text,
                 creation_time: comment.creation_time,
-                tags: tags
+                review_tags: tags
             }
         });
     });
@@ -189,7 +189,7 @@ async function indexDB() {
                         image_path: review.image_path,
                         creation_time: review.creation_time,
                         comments: commentIds,
-                        tags: review.tags
+                        review_tags: review.tags
                     },
                     upsert: {
                         review_id: review.review_id,
@@ -202,7 +202,7 @@ async function indexDB() {
                         image_path: review.image_path,
                         creation_time: review.creation_time,
                         comments: commentIds,
-                        tags: review.tags
+                        review_tags: review.tags
                     }
                 });
             });

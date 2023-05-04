@@ -22,20 +22,20 @@ const Header = () => {
 
     return (
         <AppBar position="sticky" style={{ margin: 0 }}>
-        <Toolbar>
-            <Typography variant="h6" style={{ flexGrow: 1 }}>
-                PumbaReviews
-            </Typography>
-            <TextField
-                variant="outlined"
-                size="small"
-                placeholder="Search"
-                style={{ marginLeft: 'auto' }}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={handleKeyPress} 
-                value={searchQuery}
-            />
-        </Toolbar>
+            <Toolbar>
+                <Typography variant="h6" style={{ flexGrow: 1 }}>
+                    PumbaReviews
+                </Typography>
+                <TextField
+                    variant='filled'
+                    size="small"
+                    placeholder="Search"
+                    style={{ marginLeft: 'auto' }}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyPress={handleKeyPress} 
+                    value={searchQuery}
+                />
+            </Toolbar>
         </AppBar>
     );
 };

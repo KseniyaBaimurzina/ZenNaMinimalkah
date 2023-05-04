@@ -1,17 +1,20 @@
 import React, { useCallback, useState } from "react";
-import { Card, CardHeader, CardContent, CardActions, Typography, Avatar, IconButton } from "@material-ui/core";
+import { Card, CardHeader, CardContent, CardActions, Typography, Avatar, IconButton, Chip } from "@material-ui/core";
 import { Favorite as FavoriteIcon } from "@material-ui/icons";
+import ReactMarkdown from "react-markdown";
 import Rating from '@material-ui/lab/Rating';
-import ReviewModal from "./ReviewModal";
 import usePostLike from "./ReviewLike";
 import usePostRating from "./ReviewRate";
+import api from "./axios";
+import { useNavigate } from "react-router-dom";
 
 
 const ReviewPost = ({ review, liked, rated }) => {
-    const [openReview, setOpenReview] = useState(false);
     const [likedByCurrentUser, setLikedByCurrentUser] = useState(liked);
+    const [reviewCard, setReviewCard] = useState(review);
+    const navigate = useNavigate();
 
-    const { postRating } = usePostRating({ review_id: review.review_id });
+    const { postRating } = usePostRating({ review_id: review.review_id, rated: rated });
 
     const postLike = usePostLike({
         review_id: review.review_id,
@@ -24,13 +27,19 @@ const ReviewPost = ({ review, liked, rated }) => {
         setLikedByCurrentUser(!likedByCurrentUser);
     }, [likedByCurrentUser, postLike]);
 
+    const tagSearch = useCallback(async(searchTag) =>{
+        try {
+            const res = await api.post("/search", { query: searchTag });
+            navigate("/search-result", {state: {result: res.data, query: searchTag}})
+        } catch(error){
+            console.error(error)
+        }
+    });
+
     const handleOpen = useCallback(() => {
-        setOpenReview(true);
-    }, []);
+        navigate("/review-page", { state: { review: reviewCard, liked: likedByCurrentUser, rated: rated }});
+    }, [navigate, reviewCard, likedByCurrentUser, rated]);
     
-    const handleClose = useCallback(() => {
-        setOpenReview(false);
-    }, []);
 
     return (
         <>
@@ -41,6 +50,15 @@ const ReviewPost = ({ review, liked, rated }) => {
                     subheader={new Date(review.creation_time).toLocaleString()}
                 />
                 <CardContent>
+                    {review.review_tags.map((tag, index) => (
+                        <Chip
+                            key={index}
+                            label={tag}
+                            onClick={() => tagSearch(tag)}
+                            style={{ cursor: "pointer" }}
+                            size="small"
+                        />
+                    ))}
                     <Typography variant="h6">{review.category}</Typography>
                     <Typography variant="h5">
                     {review.title}
@@ -51,12 +69,13 @@ const ReviewPost = ({ review, liked, rated }) => {
                         onChange={(event, newValue) => {
                             postRating(newValue)
                         }}
-                        disabled={rated}
                     />
                     </Typography>
                     <div onClick={handleOpen} style={{ cursor: "pointer" }}>
                         <Typography variant="subtitle1">{review.product_name}</Typography>
-                        <Typography variant="body1">{review.content}</Typography>
+                        <Typography variant="body1">
+                            <ReactMarkdown>{review.content}</ReactMarkdown>
+                        </Typography>
                         <Typography variant="h6">Rating: {review.rate}</Typography>
                     </div>
                 </CardContent>
@@ -71,7 +90,6 @@ const ReviewPost = ({ review, liked, rated }) => {
                     <Typography variant="body2">{review.like_count}</Typography>
                 </CardActions>
             </Card>
-            <ReviewModal open={openReview} onClose={handleClose} review={review} liked={likedByCurrentUser} rated={rated} />
         </>
     );
 };

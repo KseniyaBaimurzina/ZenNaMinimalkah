@@ -65,7 +65,6 @@ function AuthenticateUser(username, password) {
             column = "username";
         db.getQuery(table, column, username)
             .then(res => {
-                console.log("this is response: ", res[0].role);
                 if (VerifyPassword(password, res[0].password)) {
                     resolve(res[0].role);
                 } else {

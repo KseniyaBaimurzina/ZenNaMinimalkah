@@ -54,10 +54,10 @@ app.post("/login", function(req, res) {
     let username = '"' + req.body.username + '"';
     userFuncs.AuthenticateUser(username, req.body.password)
         .then(result => {
-            console.log(result);
             let token = userFuncs.GenerateJWT(req.body.username);
             res.cookie("access_token", token);
             res.status(200);
+            console.log(result)
             res.send({ "access_token": token, "token_type": "bearer", "role": result });
             return;
         })
@@ -129,7 +129,6 @@ app.get("/reviews", async function(req, res) {
         var reviews = { 'popularReviews': popularReviews, 'latestReviews': latestReviews };
         try {
             var auth = await userFuncs.AuthorizeUser(req.cookies.access_token)
-            console.log(auth)
         } catch {
             console.log("Unauthorized")
         }
@@ -148,7 +147,12 @@ app.get("/reviews", async function(req, res) {
 
 app.get("/user/reviews", async function(req, res) {
     try {
-        var userReviews = await revFuncs.GetUserReviews(req.cookies.access_token);
+        var user = await userFuncs.AuthorizeUser(req.cookies.access_token)
+        if (user.role === 'admin') {
+            var userReviews = await revFuncs.GetUserReviews(req.query.username);
+        } else {
+            var userReviews = await revFuncs.GetUserReviews(jwt.verify(req.cookies.access_token, config["SECRET_JWT_KEY"]).username);
+        }
         res.status(200);
         res.send(userReviews);
     } catch (err) {
@@ -197,7 +201,6 @@ app.get("/tags", async function(req, res) {
 app.post("/search", async function(req, res) {
     try {
         var searchResult = await revFuncs.SearchIndex(req.body.query);
-        console.log(searchResult)
         res.status(200);
         res.send(searchResult);
     } catch (err) {
@@ -210,7 +213,7 @@ app.post("/search", async function(req, res) {
 app.post("/rate", async function(req, res) {
     try {
         await userFuncs.AuthorizeUser(req.cookies.access_token);
-        await rateFuncs.CreateRate(req.body.rate, req.body.review_id, req.cookies.access_token);
+        await rateFuncs.CreateRate(req.body.rate, req.body.review_id, req.cookies.access_token, req.body.rated);
         res.sendStatus(200);
     } catch (err) {
         console.error(err);

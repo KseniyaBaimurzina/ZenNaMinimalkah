@@ -26,7 +26,6 @@ const getLikesRow = function() {
                     reject(err);
                 } else {
                     const rows = res.map(row => ({...row, like_count: row.like_count !== undefined ? row.like_count : 0 }));
-                    console.log("THERE " + JSON.stringify(rows));
                     resolve(rows);
                 }
             });
@@ -50,7 +49,6 @@ const getPopularReviews = function() {
                     console.error(err);
                     reject(err);
                 } else {
-                    console.log(res);
                     resolve(res);
                 }
             });
@@ -79,7 +77,6 @@ const getReviews = function(username = null) {
                     console.error(err);
                     reject(err);
                 } else {
-                    console.log(res);
                     resolve(res);
                 }
             });
@@ -94,7 +91,6 @@ const createQuery = function(table, column, value) {
                     console.error(err);
                     reject(err);
                 } else {
-                    console.log(res);
                     resolve(res);
                 }
             });
@@ -109,7 +105,6 @@ const createTagsQuery = function(tags) {
                     console.error(err);
                     reject(err);
                 } else {
-                    console.log(res);
                     resolve(res);
                 }
             });
@@ -124,23 +119,20 @@ const createRevTagsQuery = function(table, column, value) {
                     console.error(err);
                     reject(err);
                 } else {
-                    console.log(res);
                     resolve(res);
                 }
             });
     });
 }
-const updateQuery = function(table, checkCol, updCol, checkValue, updValue) {
+const updateQuery = function(table, checkCol, checkValue, updCol, updValue = null) {
     return new Promise((resolve, reject) => {
-        var updStr = updCol.map((item, index) => item + " = '" + updValue[index] + "'").join(', ');
-        console.log("This is updStr " + updStr)
-        connection.query(`UPDATE ${table} SET ${updStr} WHERE ${checkCol} = ${checkValue};`,
+        var sqlExtra = updValue === null ? '' : ` = ${updValue}`
+        connection.query(`UPDATE ${table} SET ${updCol}${sqlExtra} WHERE ${checkCol} = ${checkValue};`,
             function(err, res) {
                 if (err) {
                     console.error(err);
                     reject(err);
                 } else {
-                    console.log(res);
                     resolve(res);
                 }
             });
@@ -155,7 +147,6 @@ const deleteLikeQuery = function(table, columns, values) {
                     console.error(err);
                     reject(err);
                 } else {
-                    console.log(res);
                     resolve(res);
                 }
             });
@@ -170,7 +161,6 @@ const deleteQuery = function(table, column, value) {
                     console.error(err);
                     reject(err);
                 } else {
-                    console.log(res);
                     resolve(res);
                 }
             });

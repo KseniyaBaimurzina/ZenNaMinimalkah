@@ -12,7 +12,6 @@ function GetRating(review_id) {
                 value = review_id,
                 res = await db.getQuery(table, column, value);
             var averageRating = res.reduce((acc, curr) => acc + curr.rate, 0) / res.length;
-            console.log("This is average rating " + averageRating);
             resolve(averageRating);
         } catch (error) {
             console.error(error);
@@ -30,7 +29,6 @@ function GetUsersRate(access_token) {
                 value = "'" + username + "'",
                 res = await db.getQuery(table, column, value);
             var reviewIds = res.map(row => row.review_id);
-            console.log("THIS IS REVIEWIDS " + JSON.stringify(reviewIds));
             resolve(reviewIds);
         } catch (error) {
             console.error(error);
@@ -39,14 +37,18 @@ function GetUsersRate(access_token) {
     });
 }
 
-function CreateRate(rate, review_id, access_token) {
+function CreateRate(rate, review_id, access_token, rated) {
     return new Promise(async(resolve, reject) => {
         try {
             var username = "'" + jwt.verify(access_token, config["SECRET_JWT_KEY"]).username + "'",
-                table = "Ratings",
-                columns = ["review_id", "creator_username", "rate"],
-                values = [review_id, username, rate],
-                res = await db.createQuery(table, columns, values);
+                table = "Ratings";
+            if (rated) {
+                await db.updateQuery(table, "(creator_username, review_id)", rate, "rate", `(${username}, '${review_id}')`)
+            } else {
+                var columns = ["review_id", "creator_username", "rate"],
+                    values = [review_id, username, rate];
+                await db.createQuery(table, columns, values);
+            }
             resolve(true);
         } catch (error) {
             console.error(error);
@@ -80,7 +82,6 @@ function GetUsersLikes(access_token) {
                 value = "'" + username + "'",
                 res = await db.getQuery(table, column, value);
             var reviewIds = res.map(row => row.review_id);
-            console.log("THIS IS REVIEWIDS " + JSON.stringify(reviewIds));
             resolve(reviewIds);
         } catch (error) {
             console.error(error);

@@ -4,8 +4,10 @@ import MainPage from './MainPage';
 import RegisterForm from './Forms/RegistrationForm';
 import { useState, useEffect } from 'react';
 import UserPage from './UserPage';
-import ReviewPage from './PostReviewPage';
+import ReviewCreateUpdatePage from './PostReviewPage';
 import SearchResult from './SearchPage';
+import ReviewPage from './ReviewPage';
+import AdminPage from './AdminPage';
 
 function App() {
     // const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -22,10 +24,12 @@ function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<MainPage />} />
+                    <Route path="/review-page" element={<ReviewPage />} />
+                    <Route path="/users-list" element={<AdminPage />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/user/reviews" element={<UserPage />} />
                     <Route path="/search-result" element={<SearchResult />} />
-                    <Route path="/create-review" element={<ReviewPage />} />
+                    <Route path="/create-review" element={<ReviewCreateUpdatePage />} />
                     <Route path="/registration" element={<RegisterForm />} />
                 </Routes>
             </BrowserRouter>

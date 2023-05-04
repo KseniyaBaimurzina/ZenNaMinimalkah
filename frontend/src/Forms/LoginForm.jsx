@@ -1,4 +1,4 @@
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { fetchToken, setToken } from "../Auth";
 import { useState } from "react";
 import api from "../axios";
@@ -22,11 +22,12 @@ export default function Login() {
 
     const registration = () => {
         localStorage.removeItem("temitope");
+        localStorage.removeItem("role")
         navigate("/registration");
     };
 
     if (fetchToken()) {
-        return <Navigate to="/" />;
+        navigate("/");
     }
 
     const loginCheck = () => {
@@ -35,11 +36,10 @@ export default function Login() {
             return errorMessage;
         } else {
         setIsLoading(true);
-        console.log({ username: username, password: password })
         api.post("/login", { username: username, password: password })
             .then(function (response) {
             if (response.status === 200) {
-                setToken(response.data.access_token);
+                setToken(response.data.access_token, response.data.role);
                 navigate("/");
             }
             })
