@@ -1,17 +1,21 @@
 import { useState, useCallback, useEffect } from "react";
 import api from "./axios";
 import { useNavigate } from "react-router-dom";
+import { IntlProvider, FormattedMessage } from "react-intl";
 import {
     Box,
     List,
     ListItem,
     ListItemText,
     Typography,
+    IconButton
 } from "@material-ui/core";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const AdminPage = () => {
     const navigate = useNavigate();
     const [users, setUsers] = useState([]);
+    const [language] = useState(localStorage.getItem("language") || "en-US");
 
     const getUsers = useCallback(async() => {
         try {
@@ -35,18 +39,23 @@ const AdminPage = () => {
     }, [getUsers]);
 
     return (
-        <Box mt={4}>
-            <Typography variant="h5" align="centered" color="primary" gutterBottom>
-                Users List
-            </Typography>
-            <List>
-                {users.map((user) => (
-                <ListItem key={user.id} button onClick={() => handleUserClick(user.username)}>
-                    <ListItemText primary={user.username} />
-                </ListItem>
-                ))}
-            </List>
-        </Box>
+        <IntlProvider locale={language} messages={require(`./Languages/${language}.json`)}>
+            <IconButton onClick={() => navigate(-1)}>
+                <ArrowBackIcon />
+            </IconButton>
+            <Box mt={4} sx={{ display: 'flex', justifyContent: 'center'}}>
+                <Typography variant="h5" align="center" color="primary" gutterBottom>
+                    <FormattedMessage id="usersListTitle" defaultMessage="Users List" />
+                </Typography>
+                <List>
+                    {users.map((user) => (
+                    <ListItem key={user.id} button onClick={() => handleUserClick(user.username)}>
+                        <ListItemText primary={user.username} align="center" />
+                    </ListItem>
+                    ))}
+                </List>
+            </Box>
+        </IntlProvider>
     )
 }
 

@@ -1,4 +1,5 @@
 import {Routes, BrowserRouter, Route, Navigate, useLocation} from 'react-router-dom';
+import { IntlProvider } from 'react-intl';
 import Login from './Forms/LoginForm';
 import MainPage from './MainPage';
 import RegisterForm from './Forms/RegistrationForm';
@@ -20,8 +21,9 @@ function App() {
     // }, []);
   
     return (
-        <div>
-            <BrowserRouter>
+        <IntlProvider locale="en-US">
+            <div>
+                <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<MainPage />} />
                     <Route path="/review-page" element={<ReviewPage />} />
@@ -32,8 +34,9 @@ function App() {
                     <Route path="/create-review" element={<ReviewCreateUpdatePage />} />
                     <Route path="/registration" element={<RegisterForm />} />
                 </Routes>
-            </BrowserRouter>
-        </div>
+                </BrowserRouter>
+            </div>
+        </IntlProvider>
     );
   }
   

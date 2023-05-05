@@ -18,6 +18,7 @@ function CreateReview(access_token, user, review) {
             } else {
                 rev["creator_username"] = review.username;
             }
+            console.log(review)
             var newReview = new Review(rev),
                 res = await db.createQuery("Reviews", Object.keys(rev), '"' + Object.values(rev).join('", "') + '"');
             if (review.tags) {

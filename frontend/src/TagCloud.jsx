@@ -2,9 +2,11 @@ import api from "./axios";
 import { useState, useCallback, useEffect } from "react";
 import { Chip, Paper, Typography } from '@material-ui/core';
 import { useNavigate } from "react-router-dom";
+import { IntlProvider, FormattedMessage } from "react-intl";
 
 const Tags = () => {
     const [tags, setTags] = useState([]);
+    const [language] = useState(localStorage.getItem("language"));
     const navigate = useNavigate();
 
     const getTags = useCallback(async() => {
@@ -35,9 +37,9 @@ const Tags = () => {
     }, []);
 
     return ( 
-        <div>
+        <IntlProvider locale={language} messages={require(`./Languages/${language}.json`)}>
             <Paper style={{ padding: '1em' }}>
-                <Typography variant="h6">Tags:</Typography>
+                <Typography variant="h6"><FormattedMessage id="tagsLabel" defaultMessage="Tags" />:</Typography>
                 {tags.map((tag, index) => (
                     <Chip
                         key={index}
@@ -47,7 +49,7 @@ const Tags = () => {
                     />
                 ))}
             </Paper>
-        </div>
+        </IntlProvider>
     );
 }
 

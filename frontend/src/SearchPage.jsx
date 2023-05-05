@@ -1,22 +1,24 @@
 import Header from "./Header";
 import { Box, Typography, Button } from '@material-ui/core';
 import ReviewPost from "./ReviewPost";
+import { useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
+import { IntlProvider, FormattedMessage } from "react-intl";
 
 import React from 'react';
 
 const SearchResult = () => {
     const location = useLocation();
     const { result, query } = location.state;
-    console.log(result)
     const navigate = useNavigate();
+    const [language] = useState(localStorage.getItem("language"));
     
     const mainPage = () => {
         navigate("/")
     }
 
     return (
-        <div>
+        <IntlProvider locale={language} messages={require(`./Languages/${language}.json`)}>
             <Header />
             <div style={{float: 'right', padding: '1em'}}>
                 <Button variant="contained" color="primary" onClick={mainPage}>Main Page</Button>
@@ -25,7 +27,7 @@ const SearchResult = () => {
                 {result.length ? (
                     <>
                     <Typography variant="h4" gutterBottom>
-                        Search Results for "{query}"
+                        <FormattedMessage id="searchResultMessage" defaultMessage="Search Results for" /> "{query}"
                     </Typography>
                     {result.map((review) => (
                         <ReviewPost key={review.review_id} review={review} />
@@ -33,11 +35,11 @@ const SearchResult = () => {
                     </>
                 ) : (
                     <Typography variant="h4">
-                        No results, matching "{query}"
+                        <FormattedMessage id="absentSearchResultMessage" defaultMessage="No results, matching" /> "{query}"
                     </Typography>
                 )}
             </Box>
-        </div>
+        </IntlProvider>
     );
 };
     

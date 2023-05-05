@@ -57,7 +57,6 @@ app.post("/login", function(req, res) {
             let token = userFuncs.GenerateJWT(req.body.username);
             res.cookie("access_token", token);
             res.status(200);
-            console.log(result)
             res.send({ "access_token": token, "token_type": "bearer", "role": result });
             return;
         })

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Autocomplete } from "@material-ui/lab";
+import { IntlProvider, FormattedMessage } from "react-intl";
 import {
     TextField,
     Button,
@@ -9,16 +10,18 @@ import {
     InputLabel,
     FormControl,
     Container,
+    IconButton
 } from "@material-ui/core";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import MarkdownInput from "./Markdown";
 import api from "./axios";
 
 const ReviewCreateUpdatePage = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const [language] = useState(localStorage.getItem("language") || "en-US");
     const review = location.state?.review;
     const username = location.state.username;
-    const review_id = review?.review_id;
     const [tags, setTags] = useState(review?.review_tags || []);
     const [tagsOptions, setTagsOptions] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -57,16 +60,10 @@ const ReviewCreateUpdatePage = () => {
         getCategories();
     }, [getCategories, getTags]);
 
-    const goToMyPage = () => {
-        navigate("/user/reviews")
-    }
-
     const handleTagsChange = (event, value) => {
-        console.log(JSON.stringify(value))
         const tagsValue = value.map((tag) =>
             typeof tag === 'object' ? tag.tag : tag
         );
-        console.log(tagsValue)
         setTags(tagsValue);
       };
 
@@ -81,17 +78,12 @@ const ReviewCreateUpdatePage = () => {
                 tags: tags,
                 username: username
             });
-            setTitle("");
-            setCategory("");
-            setProductName("");
-            setContent("");
-            setRating("");
-            setTags([]);
-            goToMyPage();
+            console.log(tags)
+            navigate(-1);
         } catch (err) {
             console.error(err);
         }
-    }, [title, category, productName, content, rating]);
+    }, [navigate, tags, username, title, category, productName, content, rating]);
 
     const handleUpd = useCallback(async () => {
         try {
@@ -111,17 +103,17 @@ const ReviewCreateUpdatePage = () => {
             setContent("");
             setRating("");
             setTags([]);
-            goToMyPage()
+            navigate(-1)
         } catch (err) {
             console.error(err);
         }
-    }, [review_id, title, category, productName, content, rating]);
+    }, [navigate, title, category, productName, content, rating, tags]);
 
     return (
-        <div>
-            <div style={{float: 'right', padding: '1em'}}>
-                <Button variant="contained" color="primary" onClick={goToMyPage}>My Page</Button>
-            </div>
+        <IntlProvider locale={language} messages={require(`./Languages/${language}.json`)}>
+            <IconButton onClick={() => navigate(-1)}>
+                <ArrowBackIcon />
+            </IconButton>
             <Container maxWidth="md"> 
                 <form>
                 <Autocomplete
@@ -132,7 +124,11 @@ const ReviewCreateUpdatePage = () => {
                     onChange={handleTagsChange}
                     freeSolo
                     renderInput={(params) => (
-                    <TextField {...params} variant="outlined" label="Tags" placeholder="Add tags" />
+                    <TextField {...params} 
+                        variant="outlined" 
+                        label={<FormattedMessage id="tagsLabel" defaultMessage="Tags" />} 
+                        placeholder={<FormattedMessage id="tagsPlaceholder" defaultMessage="Add tags" />} 
+                    />
                     )}
                 />
                     <TextField
@@ -140,12 +136,14 @@ const ReviewCreateUpdatePage = () => {
                         fullWidth
                         margin="normal"
                         id="title"
-                        label="Review Title"
+                        label={<FormattedMessage id="titleLabel" defaultMessage="Review Title" />}
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                     />
                     <FormControl fullWidth margin="normal" required>
-                        <InputLabel id="category-label">Category</InputLabel>
+                    <InputLabel id="category-label">
+                        <FormattedMessage id="categoryLabel" defaultMessage="Category" />
+                    </InputLabel>
                         <Select
                             labelId="category-label"
                             id="category"
@@ -154,7 +152,7 @@ const ReviewCreateUpdatePage = () => {
                         >
                             {categories.map((category) => (
                             <MenuItem key={category.category_id} value={category.category_id}>
-                                {category.category_name}
+                                <FormattedMessage id={category.category_name} defaultMessage={category.category_name} />
                             </MenuItem>
                             ))}
                         </Select>
@@ -164,13 +162,15 @@ const ReviewCreateUpdatePage = () => {
                         fullWidth
                         margin="normal"
                         id="product-name"
-                        label="Product Name"
+                        label={<FormattedMessage id="productNameLabel" defaultMessage="Product Name" />}
                         value={productName}
                         onChange={(e) => setProductName(e.target.value)}
                     />
                     <MarkdownInput value={content} onChange={setContent} />
                     <FormControl fullWidth margin="normal" required>
-                    <InputLabel id="rating-label">Rating</InputLabel>
+                    <InputLabel id="rating-label">
+                        <FormattedMessage id="rating" defaultMessage="Rating" />
+                    </InputLabel>
                     <Select
                         labelId="rating-label"
                         id="rating"
@@ -185,11 +185,11 @@ const ReviewCreateUpdatePage = () => {
                     </Select>
                     </FormControl>
                     <Button variant="contained" color="primary" onClick={review===undefined ? handlePublish : handleUpd}>
-                        Publish
+                        <FormattedMessage id="publishButton" defaultMessage="Publish" />
                     </Button>
                 </form>
             </Container>
-        </div>
+        </IntlProvider>
     );
 };
 

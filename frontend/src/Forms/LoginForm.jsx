@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { fetchToken, setToken } from "../Auth";
 import { useState } from "react";
+import { IntlProvider, FormattedMessage } from "react-intl";
+import Header from "../Header";
 import api from "../axios";
 import {
     Container,
@@ -19,6 +21,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [language] = useState(localStorage.getItem("language"));
 
     const registration = () => {
         localStorage.removeItem("temitope");
@@ -55,75 +58,81 @@ export default function Login() {
     };
 
     return (
-        <Container component="main" maxWidth="xs">
-            <Typography component="h1" variant="h5">
-                Sign In
-            </Typography>
-            <Box sx={{ mb: 3 }}>
-                <Typography component="span" variant="body1">
-                <b>Sign in and enjoy the service</b>
+        <IntlProvider locale={language} messages={require(`../Languages/${language}.json`)}>
+            <Header />
+            <Container component="main" maxWidth="xs">
+                <Typography component="h1" variant="h5">
+                    <FormattedMessage id="signInButton" defaultMessage="Sign In" />
                 </Typography>
-            </Box>
-            <Box
-                component="form"
-                noValidate
-                onSubmit={(e) => {
-                e.preventDefault();
-                loginCheck();
-                }}
-            >
-            <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        id="username"
-                        label="Username"
-                        name="Username"
-                        autoComplete="Username"
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
+                <Box sx={{ mb: 3 }}>
+                    <Typography component="span" variant="body1">
+                        <FormattedMessage id="signInMessage" defaultMessage="Sign in and enjoy the service" />
+                    </Typography>
+                </Box>
+                <Box
+                    component="form"
+                    noValidate
+                    onSubmit={(e) => {
+                    e.preventDefault();
+                    loginCheck();
+                    }}
+                >
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            fullWidth
+                            id="username"
+                            label={<FormattedMessage id="usernameLabel" defaultMessage="username" />}
+                            name="Username"
+                            autoComplete="Username"
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            fullWidth
+                            name="password"
+                            label={<FormattedMessage id="passwordLabel" defaultMessage="password" />}
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className="signButton"
+                        >
+                        {
+                            isLoading ? <CircularProgress size={24} /> : 
+                            <FormattedMessage id="signInButton" defaultMessage="Sign In" />
+                        }
+                        </Button>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography variant="body1" sx={{ display: "inline" }}>
+                            <FormattedMessage id="signInQuestionMessage" defaultMessage="Don't have an account?" />
+                        </Typography>{" "}
+                        <Link component="button" onClick={registration}>
+                            <FormattedMessage id="signUpButton" defaultMessage="Sign Up" />
+                        </Link>
+                    </Grid>
                 </Grid>
-                <Grid item xs={12}>
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </Grid>
-                <Grid item xs={12}>
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className="signButton"
-                    >
-                    {isLoading ? <CircularProgress size={24} /> : "Sign In"}
-                    </Button>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="body1" sx={{ display: "inline" }}>
-                        Don't have an account?
-                    </Typography>{" "}
-                    <Link component="button" onClick={registration}>
-                        Sign Up
-                    </Link>
-                </Grid>
-            </Grid>
-            </Box>
-            {errorMessage && (
-                <Typography variant="body2" color="error">
-                {errorMessage}
-                </Typography>
-            )}
-        </Container>
+                </Box>
+                {errorMessage && (
+                    <Typography variant="body2" color="error">
+                    {errorMessage}
+                    </Typography>
+                )}
+            </Container>
+        </IntlProvider>
     );
 }
