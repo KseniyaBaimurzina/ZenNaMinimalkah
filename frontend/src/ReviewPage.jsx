@@ -2,9 +2,9 @@ import React, { useCallback, useState, useEffect } from "react";
 import api from "./axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IntlProvider, FormattedMessage, FormattedDate } from "react-intl";
-import usePostLike from "./ReviewLike";
-import usePostRating from "./ReviewRate";
-import Header from "./Header";
+import usePostLike from "./Components/ReviewLike";
+import usePostRating from "./Components/ReviewRate";
+import Header from "./Components/Header";
 import { 
     TextField,
     List, 

@@ -1,4 +1,4 @@
-import api from "./axios";
+import api from "../axios";
 import { useCallback, useState } from "react";
 
 const usePostRating = ({ review_id, rated }) => {

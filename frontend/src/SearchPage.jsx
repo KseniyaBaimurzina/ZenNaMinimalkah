@@ -1,6 +1,6 @@
-import Header from "./Header";
+import Header from "./Components/Header";
 import { Box, Typography, Button } from '@material-ui/core';
-import ReviewPost from "./ReviewPost";
+import ReviewPost from "./Components/ReviewPost";
 import { useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IntlProvider, FormattedMessage } from "react-intl";
@@ -11,7 +11,7 @@ const SearchResult = () => {
     const location = useLocation();
     const { result, query } = location.state;
     const navigate = useNavigate();
-    const [language] = useState(localStorage.getItem("language"));
+    const [language] = useState(localStorage.getItem("language") || "en-US");
     
     const mainPage = () => {
         navigate("/")

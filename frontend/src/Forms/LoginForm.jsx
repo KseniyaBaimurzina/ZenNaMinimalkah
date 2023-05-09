@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchToken, setToken } from "../Auth";
 import { useState } from "react";
 import { IntlProvider, FormattedMessage } from "react-intl";
-import Header from "../Header";
+import Header from "../Components/Header";
 import api from "../axios";
 import {
     Container,
@@ -21,7 +21,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [language] = useState(localStorage.getItem("language"));
+    const [language] = useState(localStorage.getItem("language") || "en-US");
 
     const registration = () => {
         localStorage.removeItem("temitope");

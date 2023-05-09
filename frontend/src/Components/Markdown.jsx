@@ -14,7 +14,7 @@ const MarkdownInput = ({ value, onChange }) => {
     };
 
     return (
-        <IntlProvider locale={language} messages={require(`./Languages/${language}.json`)}>
+        <IntlProvider locale={language} messages={require(`../Languages/${language}.json`)}>
             <TextField
                 fullWidth
                 margin="normal"

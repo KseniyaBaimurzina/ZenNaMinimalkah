@@ -224,6 +224,8 @@ async function indexDB() {
                     }
                 });
             });
+            await client.bulk({ body });
+            console.log(`Index ${indexName} successfully created.`);
         }
 
     } catch (error) {

@@ -44,7 +44,7 @@ const AdminPage = () => {
                 <ArrowBackIcon />
             </IconButton>
             <Box mt={4} sx={{ display: 'flex', justifyContent: 'center'}}>
-                <Typography variant="h5" align="center" color="primary" gutterBottom>
+                <Typography variant="h5" align="center" color="secondary" gutterBottom>
                     <FormattedMessage id="usersListTitle" defaultMessage="Users List" />
                 </Typography>
                 <List>

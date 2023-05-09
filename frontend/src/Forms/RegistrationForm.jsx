@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from "react-router"
 import api from '../axios';
-import Header from '../Header';
+import Header from '../Components/Header';
 import { IntlProvider, FormattedMessage } from "react-intl";
 import { Container, Typography, Box, TextField, Button, Link } from '@material-ui/core';
 
@@ -10,7 +10,7 @@ export default function RegisterForm() {
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [errorMessage, setErrorMessage] = useState("");
-    const [language] = useState(localStorage.getItem("language"));
+    const [language] = useState(localStorage.getItem("language") || "en-US");
 
     const handleLoginClick = () => {
         localStorage.removeItem('temitope');

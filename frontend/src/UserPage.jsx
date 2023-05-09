@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Container, Typography, Button, MenuItem, Select, FormControl, InputLabel } from "@material-ui/core";
-import ReviewPost from "./ReviewPost";
+import { Container, Button, MenuItem, Select, FormControl, InputLabel } from "@material-ui/core";
+import ReviewPost from "./Components/ReviewPost";
 import api from "./axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IntlProvider, FormattedMessage } from "react-intl";
-import Header from "./Header";
+import Header from "./Components/Header";
 
 const UserPage = () => {
     const location = useLocation();
@@ -13,7 +13,7 @@ const UserPage = () => {
     const [userReviews, setUserReviews] = useState([]);
     const [sortOption, setSortOption] = useState("");
     const [filterOption, setFilterOption] = useState("");
-    const [language] = useState(localStorage.getItem("language"));
+    const [language] = useState(localStorage.getItem("language") || "en-US");
 
     const handleSortChange = (event) => {
         setSortOption(event.target.value);
@@ -122,9 +122,6 @@ const UserPage = () => {
                 </Button>
             </div>
             <Container maxWidth="md" style={{ paddingTop: "2em" }}>
-                <Typography variant="h4" color="primary" align="center">
-                    <FormattedMessage id="myPostsTitle" defaultMessage="My Reviews" />
-                </Typography>
                 <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">
                         <FormattedMessage id="sortLabel" defaultMessage="SORT BY" />
