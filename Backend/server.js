@@ -22,11 +22,11 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 
-// indexDB();
+indexDB();
 
-// setInterval(() => {
-//     indexDB();
-// }, 12 * 60 * 60 * 1000);
+setInterval(() => {
+    indexDB();
+}, 12 * 60 * 60 * 1000);
 
 app.post("/registration", function(req, res) {
     if (Object.keys(req.body).length === 0) {
@@ -197,17 +197,17 @@ app.get("/tags", async function(req, res) {
     }
 })
 
-// app.post("/search", async function(req, res) {
-//     try {
-//         var searchResult = await revFuncs.SearchIndex(req.body.query);
-//         res.status(200);
-//         res.send(searchResult);
-//     } catch (err) {
-//         console.error(err);
-//         res.status(err.status);
-//         res.send(err.message);
-//     }
-// })
+app.post("/search", async function(req, res) {
+    try {
+        var searchResult = await revFuncs.SearchIndex(req.body.query);
+        res.status(200);
+        res.send(searchResult);
+    } catch (err) {
+        console.error(err);
+        res.status(err.status);
+        res.send(err.message);
+    }
+})
 
 app.post("/rate", async function(req, res) {
     try {
