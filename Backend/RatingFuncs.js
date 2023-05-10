@@ -43,7 +43,7 @@ function CreateRate(rate, review_id, access_token, rated) {
             var username = "'" + jwt.verify(access_token, config["SECRET_JWT_KEY"]).username + "'",
                 table = "Ratings";
             if (rated) {
-                await db.updateQuery(table, "(creator_username, review_id)", rate, "rate", `(${username}, '${review_id}')`)
+                await db.updateQuery(table, "(creator_username, review_id)", `(${username}, '${review_id}')`, "rate", rate, )
             } else {
                 var columns = ["review_id", "creator_username", "rate"],
                     values = [review_id, username, rate];

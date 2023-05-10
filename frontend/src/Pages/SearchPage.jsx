@@ -1,14 +1,16 @@
-import Header from "./Components/Header";
+import Header from "../Components/Header";
 import { Box, Typography, Button } from '@material-ui/core';
-import ReviewPost from "./Components/ReviewPost";
+import ReviewPost from "../Components/ReviewPost";
 import { useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IntlProvider, FormattedMessage } from "react-intl";
+import useStyles from "../Styles/AppStyles";
 
 import React from 'react';
 
 const SearchResult = () => {
     const location = useLocation();
+    const classes = useStyles();
     const { result, query } = location.state;
     const navigate = useNavigate();
     const [language] = useState(localStorage.getItem("language") || "en-US");
@@ -18,10 +20,12 @@ const SearchResult = () => {
     }
 
     return (
-        <IntlProvider locale={language} messages={require(`./Languages/${language}.json`)}>
+        <IntlProvider locale={language} messages={require(`../Languages/${language}.json`)}>
             <Header />
-            <div style={{float: 'right', padding: '1em'}}>
-                <Button variant="contained" color="primary" onClick={mainPage}>Main Page</Button>
+            <div className={classes.homePageButton}>
+                <Button variant="contained" color="primary" onClick={mainPage}>
+                    <FormattedMessage id="mainPageButton" defaultMessage="HOME PAGE" />
+                </Button>
             </div>
             <Box textAlign="center" mt={8}>
                 {result.length ? (

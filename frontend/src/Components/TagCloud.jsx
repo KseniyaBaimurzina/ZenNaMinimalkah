@@ -44,10 +44,11 @@ const Tags = () => {
     return (
         <ThemeProvider theme={theme}>
             <IntlProvider locale={language} messages={require(`../Languages/${language}.json`)}>
-                <Paper style={{ padding: '1em' }} className={classes.card}>
+                <Paper className={classes.tagPaper}>
                     <Typography variant="h6"><FormattedMessage id="tagsLabel" defaultMessage="Tags" />:</Typography>
                     {tags.map((tag, index) => (
                         <Chip
+                            style={{backgroundColor: theme.palette.background.tags, color: theme.palette.text.primary, marginLeft: "5px"}}
                             key={index}
                             label={tag.tag}
                             onClick={() => searchTag(tag.tag)}

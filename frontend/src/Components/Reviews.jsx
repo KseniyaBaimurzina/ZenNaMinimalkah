@@ -41,7 +41,7 @@ const Reviews = () => {
             <IntlProvider locale={language} messages={require(`../Languages/${language}.json`)}>
                 <Grid container >
                     <Grid item xs={12} md={6} >
-                    <Typography variant="h6" style={{marginLeft:'15px'}}>
+                    <Typography variant="h6" className={classes.homeHeadings}>
                         <FormattedMessage id="popularReviewsTitle" defaultMessage="Popular Reviews" />
                     </Typography>
                     {popularReviews.map((review) => (
@@ -49,7 +49,7 @@ const Reviews = () => {
                     ))}
                     </Grid>
                     <Grid item xs={12} md={6}>
-                    <Typography variant="h6" style={{marginLeft:'15px'}}>
+                    <Typography variant="h6" className={classes.homeHeadings}>
                         <FormattedMessage id="latestReviewsTitle" defaultMessage="Latest Reviews" />
                     </Typography>
                     {latestReviews.map((review) => (

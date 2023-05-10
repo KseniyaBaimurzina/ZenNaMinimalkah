@@ -8,7 +8,6 @@ const client = new Client({ node: config["ELASTICSEARCH_SERVER"] });
 async function checkIndexExists(indexName) {
     try {
         const result = await client.indices.exists({ index: indexName });
-        console.log(indexName);
         return result;
     } catch (error) {
         console.error(`Error checking if index ${indexName} exists: ${error}`);

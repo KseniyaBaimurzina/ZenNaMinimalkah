@@ -1,12 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Container, Button, MenuItem, Select, FormControl, InputLabel } from "@material-ui/core";
-import ReviewPost from "./Components/ReviewPost";
-import api from "./axios";
+import ReviewPost from "../Components/ReviewPost";
+import api from "../axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { IntlProvider, FormattedMessage } from "react-intl";
-import Header from "./Components/Header";
+import Header from "../Components/Header";
+import useStyles from "../Styles/AppStyles";
+import { ThemeProvider } from '@material-ui/styles';
+import { darkTheme, lightTheme } from "../Styles/Theme";
 
 const UserPage = () => {
+    const classes = useStyles();
     const location = useLocation();
     const navigate = useNavigate();
     const username = location.state?.username || null;
@@ -14,6 +18,7 @@ const UserPage = () => {
     const [sortOption, setSortOption] = useState("");
     const [filterOption, setFilterOption] = useState("");
     const [language] = useState(localStorage.getItem("language") || "en-US");
+    const theme = localStorage.getItem("isDarkMode") === 'true' ? darkTheme : lightTheme;
 
     const handleSortChange = (event) => {
         setSortOption(event.target.value);
@@ -26,10 +31,6 @@ const UserPage = () => {
     const handleCreateReview = () => {
         navigate("/create-review", {state: {username: username}});
     };
-
-    const handleUpdateReview = (review) => {
-        navigate("/create-review", {state:{review: review, username: username}})
-    }
 
     const mainPage = () => {
         navigate("/");
@@ -44,16 +45,7 @@ const UserPage = () => {
         }
     }, [username]);
 
-    const handleDelete = useCallback(async (reviewId) => {
-        try {
-            await api.delete("/review", { data: { review_id: reviewId } });
-            setUserReviews((prevReviews) =>
-                prevReviews.filter((review) => review.review_id !== reviewId)
-            );
-        } catch (err) {
-            console.error(err);
-        }
-    }, []);
+    
 
     useEffect(() => {
         getUserReviews();
@@ -105,9 +97,10 @@ const UserPage = () => {
     };
 
     return (
-        <IntlProvider locale={language} messages={require(`./Languages/${language}.json`)}>
+        <ThemeProvider theme={theme}>
+        <IntlProvider locale={language} messages={require(`../Languages/${language}.json`)}>
             <Header />
-            <div style={{ float: "left", padding: "1em" }}>
+            <div className={classes.createReviewButton}>
                 <Button
                     variant="contained"
                     color="primary"
@@ -116,22 +109,20 @@ const UserPage = () => {
                     <FormattedMessage id="createReviewButton" defaultMessage="Create Review" />
                 </Button>
             </div>
-            <div style={{ float: "right", padding: "1em" }}>
+            <div className={classes.homePageButton}>
                 <Button variant="contained" color="primary" onClick={mainPage}>
                     <FormattedMessage id="mainPageButton" defaultMessage="Main Page" />
                 </Button>
             </div>
-            <Container maxWidth="md" style={{ paddingTop: "2em" }}>
-                <FormControl fullWidth>
+            <Container maxWidth="md" >
+                <Container>
+                <FormControl fullWidth className={classes.formControl}>
                     <InputLabel id="demo-simple-select-label">
                         <FormattedMessage id="sortLabel" defaultMessage="SORT BY" />
                     </InputLabel>
                     <Select 
                         value={sortOption} 
-                        onChange={handleSortChange} 
-                        label="Sort By" 
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
+                        onChange={handleSortChange}
                     >
                         <MenuItem value="date">
                             <FormattedMessage id="dateSortLabel" defaultMessage="Date" />
@@ -144,16 +135,13 @@ const UserPage = () => {
                         </MenuItem>
                     </Select>
                 </FormControl>
-                <FormControl fullWidth>
+                <FormControl fullWidth className={classes.formControl}>
                     <InputLabel id="demo-simple-select-label">
                         <FormattedMessage id="filterLabel" defaultMessage="FILTER BY" />
                     </InputLabel>
-                    <Select 
+                    <Select
                         value={filterOption} 
                         onChange={handleFilterChange} 
-                        label="Filter by"
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
                     >
                         <MenuItem value="rating1">
                             <FormattedMessage id="ratingFilterLabel" defaultMessage="Rating from" /> 1
@@ -178,27 +166,16 @@ const UserPage = () => {
                         </MenuItem>
                     </Select>
                 </FormControl>
+                </Container>
                 {sortReviews(userReviews, sortOption, filterOption).map((review) => (
-                <div key={review.review_id}>
-                    <ReviewPost review={review} liked={review.liked} />
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => handleDelete(review.review_id)}
-                    >
-                        <FormattedMessage id="deleteButton" defaultMessage="DELETE" />
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => handleUpdateReview(review)}
-                    >
-                        <FormattedMessage id="editButton" defaultMessage="EDIT" />
-                    </Button>
+                <div key={review.review_id} >
+                    <ReviewPost review={review} liked={review.liked} username={username}/>
+                        
                 </div>
                 ))}
             </Container>
         </IntlProvider>
+        </ThemeProvider>
     );
 };
 

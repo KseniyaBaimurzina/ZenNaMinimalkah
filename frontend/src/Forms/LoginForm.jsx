@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { fetchToken, setToken } from "../Auth";
+import { fetchToken, setToken } from "../Components/Auth";
 import { useState } from "react";
 import { IntlProvider, FormattedMessage } from "react-intl";
 import Header from "../Components/Header";
 import api from "../axios";
+import useStyles from "../Styles/AppStyles";
 import {
     Container,
     Typography,
@@ -17,6 +18,7 @@ import {
 
 export default function Login() {
     const navigate = useNavigate();
+    const classes = useStyles();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
@@ -60,12 +62,9 @@ export default function Login() {
     return (
         <IntlProvider locale={language} messages={require(`../Languages/${language}.json`)}>
             <Header />
-            <Container component="main" maxWidth="xs">
-                <Typography component="h1" variant="h5">
-                    <FormattedMessage id="signInButton" defaultMessage="Sign In" />
-                </Typography>
+            <Container component="main" maxWidth="xs" className={classes.signContainer}>
                 <Box sx={{ mb: 3 }}>
-                    <Typography component="span" variant="body1">
+                    <Typography variant="h5">
                         <FormattedMessage id="signInMessage" defaultMessage="Sign in and enjoy the service" />
                     </Typography>
                 </Box>
@@ -86,7 +85,6 @@ export default function Login() {
                             id="username"
                             label={<FormattedMessage id="usernameLabel" defaultMessage="username" />}
                             name="Username"
-                            autoComplete="Username"
                             onChange={(e) => setUsername(e.target.value)}
                         />
                     </Grid>
@@ -121,7 +119,7 @@ export default function Login() {
                         <Typography variant="body1" sx={{ display: "inline" }}>
                             <FormattedMessage id="signInQuestionMessage" defaultMessage="Don't have an account?" />
                         </Typography>{" "}
-                        <Link component="button" onClick={registration}>
+                        <Link className={classes.signLink} component="button" onClick={registration} >
                             <FormattedMessage id="signUpButton" defaultMessage="Sign Up" />
                         </Link>
                     </Grid>

@@ -17,7 +17,7 @@ const usePostRating = ({ review_id, rated }) => {
         } catch (err) {
             console.error(err);
         }
-    }, [review_id]);
+    }, [review_id, rated]);
 
     return { isRated, postRating };
 };

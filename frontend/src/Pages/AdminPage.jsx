@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import api from "./axios";
+import api from "../axios";
 import { useNavigate } from "react-router-dom";
 import { IntlProvider, FormattedMessage } from "react-intl";
 import {
@@ -39,7 +39,7 @@ const AdminPage = () => {
     }, [getUsers]);
 
     return (
-        <IntlProvider locale={language} messages={require(`./Languages/${language}.json`)}>
+        <IntlProvider locale={language} messages={require(`../Languages/${language}.json`)}>
             <IconButton onClick={() => navigate(-1)}>
                 <ArrowBackIcon />
             </IconButton>

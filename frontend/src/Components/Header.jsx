@@ -2,7 +2,7 @@ import { AppBar, Toolbar, Typography, TextField, Button, Switch, ThemeProvider }
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IntlProvider, FormattedMessage } from "react-intl";
-import { fetchToken } from "../Auth";
+import { fetchToken } from "./Auth";
 import api from '../axios';
 import LanguageSwitcher from './LanguageSwitch';
 import { lightTheme, darkTheme } from '../Styles/Theme';
@@ -56,17 +56,17 @@ const Header = () => {
     return (
         <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
             <IntlProvider locale={language} messages={require(`../Languages/${language}.json`)}>
-                <AppBar position="sticky" style={{ margin: 0 }}>
+                <AppBar position="sticky" >
                     <Toolbar>
                         <Typography variant="h6">
-                            <FormattedMessage id="headerTitle" defaultMessage="Pumba Reviews" />
+                            <FormattedMessage id="headerTitle" defaultMessage="PUMBA REVIEWS" />
                         </Typography>
                         {myReviewsButton}
                         {adminButton}
                         <TextField
                             className={classes.searchTextField}
                             variant='filled'
-                            placeholder="search"
+                            placeholder="SEARCH"
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyPress={handleKeyPress} 
                             value={searchQuery}

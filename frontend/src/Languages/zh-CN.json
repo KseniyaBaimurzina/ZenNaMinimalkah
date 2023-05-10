@@ -2,11 +2,11 @@
     "popularReviewsTitle": "热帖",
     "latestReviewsTitle": "最新帖",
     "usersListTitle": "用户列表",
-    "headerTitle": "Pumba评论",
+    "headerTitle": "PUMBA评论",
     "previewTitle": "评论预览",
     "readMoreTitle": "阅读更多",
     "myPostsTitle": "我帖",
-    "commentAbsentTitle": "没有评论",
+    "commentAbsentTitle": "还没有评论",
     "mainPageButton": "主页",
     "createReviewButton": "创建按帖",
     "publishButton": "发布",
@@ -44,5 +44,9 @@
     "signInMessage": "登录享受服务",
     "signUpMessage": "报名享受服务",
     "signInQuestionMessage": "没有账户吗？",
-    "signUpQuestionMessage": "已经有一个帐户？"
+    "signUpQuestionMessage": "已经有一个帐户？",
+    "passwordLengthMessage": "密码应至少为3个字符",
+    "emailLengthMessage": "电子邮件必须超过5个字符",
+    "usernameRequireMessage": "名不可为空",
+    "usernameLengthMessage": "用户名必须大于3个字符"
 }

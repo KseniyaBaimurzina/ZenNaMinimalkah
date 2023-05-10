@@ -25,7 +25,7 @@ const MarkdownInput = ({ value, onChange }) => {
                 value={markdownSrc}
                 onChange={handleChange}
             />
-            <Typography variant="h6" color="primary">
+            <Typography variant="h6">
                 <FormattedMessage id="previewTitle" defaultMessage="Review Preview" />:
             </Typography>
             <ReactMarkdown>{markdownSrc}</ReactMarkdown>

@@ -1,16 +1,6 @@
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
-    // components: {
-    //     MuiChip: {
-    //         styleOverrides: {
-    //             root: {
-    //                 backgroundColor: theme.palette.background.tags,
-    //                 color: theme.palette.text.primary,
-    //             }
-    //         }
-    //     }
-    // },
     '@global': {
         body: {
             overflowX: 'hidden',
@@ -65,10 +55,6 @@ const useStyles = makeStyles((theme) => ({
             maxWidth: 250,
         },
     },
-    // chipComponent: {
-    //     backgroundColor: theme.palette.background.tags,
-    //     color: theme.palette.text.primary,
-    // },
     languageButton: {
         color: "#cccfff",
         backgroundColor: "transparent",
@@ -83,13 +69,58 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: theme.palette.background.menu,
         },
     },
-    overrides: {
-        MuiChip: {
-            root: {
-                backgroundColor: theme.palette.background.tags,
-                color: theme.palette.text.primary
-            }
-        }
+    formControl: {
+        marginBottom: "5px"
+    },
+    reviewPageContainer: {
+        width: '66%',
+        margin: 'auto',
+        backgroundColor: "transparent",
+        marginBottom: '5px'
+    },
+    tagPaper: {
+        margin: '15px',
+        border: "2px solid #0a0f64",
+        backgroundColor: "transparent",
+        padding: '1em'
+    },
+    signLink: {
+        color: theme.palette.text.primary
+    },
+    signContainer: {
+        marginTop:'15px'
+    },
+    deleteButton: {
+        display: "flex", 
+        marginBottom: "5px"
+    },
+    userPageReview: {
+        display: 'flex', 
+        justifyContent: 'space-between'
+    },
+    cardHeader: {
+        display: 'flex', 
+        justifyContent: 'flex-start'
+    },
+    cardButtons: {
+        display: 'flex', 
+        justifyContent: 'flex-end',
+        marginTop: '15px', 
+        marginRight: '5px' 
+    },
+    clickable: {
+        cursor: 'pointer'
+    },
+    homeHeadings: {
+        marginLeft: '15px'
+    },
+    homePageButton: {
+        float: 'right', 
+        padding: '1em'
+    },
+    createReviewButton: {
+        float: 'left', 
+        padding: '1em'
     }
 }));
 

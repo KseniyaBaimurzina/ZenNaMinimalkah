@@ -34,7 +34,6 @@ const getLikesRow = function() {
 
 const getPopularReviews = function() {
     return new Promise((resolve, reject) => {
-        // if (review_ids.length === 0) resolve([])
         connection.query(`SELECT Reviews.*,` +
             `COUNT(Likes.review_id) AS like_count, ` +
             `COALESCE(AVG(Ratings.rate), 0) AS users_rating ` +

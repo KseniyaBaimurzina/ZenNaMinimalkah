@@ -44,7 +44,6 @@ function UpdateReview(access_token, user, review) {
                 if (review.tags) {
                     var tags = review.tags.map(tag => `('${tag}')`).join(",");
                     await db.createTagsQuery(tags);
-                    console.log(review)
                     tags = review.tags.map(tag => `('${review.review.review_id}', '${tag}')`).join(',');
                     await db.deleteQuery("ReviewTags", "review_id", review.review.review_id);
                     await db.createRevTagsQuery("ReviewTags", "review_id, tag", tags);
@@ -108,7 +107,7 @@ async function GetReviewTags(reviews) {
         });
         return reviews;
     } catch (error) {
-        throw new Error(error);
+        console.error(error);
     }
 }
 

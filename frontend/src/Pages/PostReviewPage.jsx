@@ -13,8 +13,8 @@ import {
     IconButton
 } from "@material-ui/core";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import MarkdownInput from "./Components/Markdown";
-import api from "./axios";
+import MarkdownInput from "../Components/Markdown";
+import api from "../axios";
 
 const ReviewCreateUpdatePage = () => {
     const location = useLocation();
@@ -110,7 +110,7 @@ const ReviewCreateUpdatePage = () => {
     }, [navigate, title, category, productName, content, rating, tags]);
 
     return (
-        <IntlProvider locale={language} messages={require(`./Languages/${language}.json`)}>
+        <IntlProvider locale={language} messages={require(`../Languages/${language}.json`)}>
             <IconButton onClick={() => navigate(-1)}>
                 <ArrowBackIcon />
             </IconButton>
@@ -127,7 +127,6 @@ const ReviewCreateUpdatePage = () => {
                     <TextField {...params} 
                         variant="outlined" 
                         label={<FormattedMessage id="tagsLabel" defaultMessage="Tags" />} 
-                        placeholder={<FormattedMessage id="tagsPlaceholder" defaultMessage="Add tags" />} 
                     />
                     )}
                 />

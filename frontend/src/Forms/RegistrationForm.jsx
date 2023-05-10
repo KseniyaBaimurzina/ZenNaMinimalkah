@@ -5,9 +5,11 @@ import api from '../axios';
 import Header from '../Components/Header';
 import { IntlProvider, FormattedMessage } from "react-intl";
 import { Container, Typography, Box, TextField, Button, Link } from '@material-ui/core';
+import useStyles from '../Styles/AppStyles';
 
 export default function RegisterForm() {
     const navigate = useNavigate();
+    const classes = useStyles();
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [errorMessage, setErrorMessage] = useState("");
     const [language] = useState(localStorage.getItem("language") || "en-US");
@@ -34,13 +36,10 @@ export default function RegisterForm() {
     return (
         <IntlProvider locale={language} messages={require(`../Languages/${language}.json`)}>
             <Header />
-            <Container component="main" maxWidth="xs">
+            <Container component="main" maxWidth="xs" className={classes.signContainer}>
                 <Box minHeight={940} marginTop={2}>
-                    <Typography component="h1" variant="h5">
-                        <FormattedMessage id="signUpButton" defaultMessage="Sign Up" />
-                    </Typography>
                     <form onSubmit={handleSubmit(onSubmit)}>
-                        <Typography component="span" variant="body1">
+                        <Typography variant="h5">
                             <FormattedMessage id="signUpMessage" defaultMessage="Sign up and enjoy the service" />
                         </Typography>
                         <TextField
@@ -56,9 +55,9 @@ export default function RegisterForm() {
                             error={Boolean(errors.username)}
                             helperText={
                             errors.username?.type === "required"
-                                ? "Username is required"
+                                ? <FormattedMessage id="usernameRequireMessage" />
                                 : errors.username?.type === "minLength"
-                                ? "Username must be longer than 3 characters"
+                                ? <FormattedMessage id="usernameLengthMessage" />
                                 : null
                             }
                         />
@@ -74,7 +73,7 @@ export default function RegisterForm() {
                             error={Boolean(errors.email)}
                             helperText={
                             errors.email?.type === "minLength"
-                                ? "Email must be longer than 5 characters"
+                                ? <FormattedMessage id="emailLengthMessage"/>
                                 : null
                             }
                         />
@@ -87,11 +86,11 @@ export default function RegisterForm() {
                             type="password"
                             id="password"
                             autoComplete="current-password"
-                            {...register("password", { required: true, minLength: 1 })}
+                            {...register("password", { required: true, minLength: 3 })}
                             error={Boolean(errors.password)}
                             helperText={
                             errors.password?.type === "minLength"
-                                ? "Password should be at least 1 character"
+                                ? <FormattedMessage id="passwordLengthMessage"/>
                                 : null
                             }
                         />
