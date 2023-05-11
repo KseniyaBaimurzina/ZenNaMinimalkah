@@ -8,7 +8,7 @@ import useStyles from "../Styles/AppStyles";
 
 import React from 'react';
 
-const SearchResult = () => {
+const SearchPage = () => {
     const location = useLocation();
     const classes = useStyles();
     const { result, query } = location.state;
@@ -47,4 +47,4 @@ const SearchResult = () => {
     );
 };
     
-export default SearchResult;
+export default SearchPage;

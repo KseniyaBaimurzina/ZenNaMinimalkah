@@ -1,0 +1,6 @@
+export {default as AdminPage} from './AdminPage'
+export {default as MainPage} from './MainPage'
+export {default as ReviewCreateUpdatePage} from './ReviewCreateUpdatePage'
+export {default as ReviewPage} from './ReviewPage'
+export {default as SearchPage} from './SearchPage'
+export {default as UserPage} from './UserPage'

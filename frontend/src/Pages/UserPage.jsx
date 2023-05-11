@@ -162,7 +162,7 @@ const UserPage = () => {
                             <FormattedMessage id="thisWeekFilterLabel" defaultMessage="This week reviews" />
                         </MenuItem>
                         <MenuItem value="highlyRated">
-                            <FormattedMessage id="thisWeekFilterLabel" defaultMessage="Authors highly rated reviews" />
+                            <FormattedMessage id="authorRatedFilterLabel" defaultMessage="Authors highly rated reviews" />
                         </MenuItem>
                     </Select>
                 </FormControl>

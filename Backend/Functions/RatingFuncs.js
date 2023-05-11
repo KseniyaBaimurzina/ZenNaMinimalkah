@@ -1,5 +1,4 @@
-import * as db from "./DBRequests.js";
-import jwt from "jsonwebtoken";
+import * as db from "../DBRequests.js";
 import * as dotenv from "dotenv";
 
 const config = dotenv.config(".env").parsed;
@@ -7,10 +6,11 @@ const config = dotenv.config(".env").parsed;
 function GetRating(review_id) {
     return new Promise(async(resolve, reject) => {
         try {
-            var table = "Ratings",
+            var res = await db.getQuery(
+                table = "Ratings",
                 column = "review_id",
-                value = review_id,
-                res = await db.getQuery(table, column, value);
+                value = review_id
+            );
             var averageRating = res.reduce((acc, curr) => acc + curr.rate, 0) / res.length;
             resolve(averageRating);
         } catch (error) {
@@ -20,14 +20,14 @@ function GetRating(review_id) {
     });
 }
 
-function GetUsersRate(access_token) {
+function GetUsersRate(username) {
     return new Promise(async(resolve, reject) => {
         try {
-            var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username,
+            var res = await db.getQuery(
                 table = "Ratings",
                 column = "creator_username",
-                value = "'" + username + "'",
-                res = await db.getQuery(table, column, value);
+                value = "'" + username + "'"
+            );
             var reviewIds = res.map(row => row.review_id);
             resolve(reviewIds);
         } catch (error) {
@@ -37,17 +37,17 @@ function GetUsersRate(access_token) {
     });
 }
 
-function CreateRate(rate, review_id, access_token, rated) {
+function CreateRate(rate, review_id, username, rated) {
     return new Promise(async(resolve, reject) => {
         try {
-            var username = "'" + jwt.verify(access_token, config["SECRET_JWT_KEY"]).username + "'",
-                table = "Ratings";
             if (rated) {
-                await db.updateQuery(table, "(creator_username, review_id)", `(${username}, '${review_id}')`, "rate", rate, )
+                await db.updateQuery("Ratings", "(creator_username, review_id)", `(${username}, '${review_id}')`, "rate", rate, )
             } else {
-                var columns = ["review_id", "creator_username", "rate"],
-                    values = [review_id, username, rate];
-                await db.createQuery(table, columns, values);
+                await db.createQuery(
+                    table = "Ratings",
+                    columns = ["review_id", "creator_username", "rate"],
+                    values = [review_id, "'" + username + "'", rate]
+                );
             }
             resolve(true);
         } catch (error) {
@@ -57,14 +57,20 @@ function CreateRate(rate, review_id, access_token, rated) {
     });
 }
 
-function CreateLike(review_id, is_liked, access_token) {
+function CreateLike(review_id, is_liked, username) {
     return new Promise(async(resolve, reject) => {
         try {
-            var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username,
-                table = "Likes",
-                columns = ["review_id", "creator_username"],
-                values = [review_id, "'" + username + "'"],
-                res = is_liked ? await db.createQuery(table, columns, values) : await db.deleteLikeQuery(table, columns, values);
+            var res = is_liked ?
+                await db.createQuery(
+                    table = "Likes",
+                    columns = ["review_id", "creator_username"],
+                    values = [review_id, "'" + username + "'"]
+                ) :
+                await db.deleteLikeQuery(
+                    table = "Likes",
+                    columns = ["review_id", "creator_username"],
+                    values = [review_id, "'" + username + "'"]
+                );
             resolve(true);
         } catch (error) {
             console.error(error);
@@ -73,14 +79,14 @@ function CreateLike(review_id, is_liked, access_token) {
     });
 }
 
-function GetUsersLikes(access_token) {
+function GetUsersLikes(username) {
     return new Promise(async(resolve, reject) => {
         try {
-            var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username,
+            var res = await db.getQuery(
                 table = "Likes",
                 column = "creator_username",
-                value = "'" + username + "'",
-                res = await db.getQuery(table, column, value);
+                value = "'" + username + "'"
+            );
             var reviewIds = res.map(row => row.review_id);
             resolve(reviewIds);
         } catch (error) {

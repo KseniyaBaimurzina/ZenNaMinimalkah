@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { IntlProvider, FormattedMessage } from "react-intl";
 import { fetchToken } from "./Auth";
 import api from '../axios';
-import LanguageSwitcher from './LanguageSwitch';
+import LanguageSwitch from './LanguageSwitch';
 import { lightTheme, darkTheme } from '../Styles/Theme';
 import useStyles from '../Styles/AppStyles';
 
@@ -80,7 +80,7 @@ const Header = () => {
                             onChange={handleThemeChange}
                             color="secondary"
                         />
-                        <LanguageSwitcher />
+                        <LanguageSwitch />
                         <Button className={classes.signHeaderButton} variant="contained" color="secondary" onClick={signOut}>
                             <FormattedMessage id={buttonText} />
                         </Button>

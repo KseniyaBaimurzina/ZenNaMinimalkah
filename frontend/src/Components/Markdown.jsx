@@ -3,7 +3,7 @@ import { TextField, Typography } from "@material-ui/core";
 import ReactMarkdown from "react-markdown";
 import { IntlProvider, FormattedMessage } from "react-intl";
 
-const MarkdownInput = ({ value, onChange }) => {
+const Markdown = ({ value, onChange }) => {
     const [markdownSrc, setMarkdownSrc] = useState(value);
     const [language] = useState(localStorage.getItem("language") || "en")
 
@@ -33,4 +33,4 @@ const MarkdownInput = ({ value, onChange }) => {
     );
 };
 
-export default MarkdownInput;
+export default Markdown;

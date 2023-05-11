@@ -1,6 +1,5 @@
-import Review from "./DBModels/review.js";
-import jwt from "jsonwebtoken";
-import * as db from "./DBRequests.js";
+import Review from "../DBModels/review.js";
+import * as db from "../DBRequests.js";
 import { Client } from '@elastic/elasticsearch';
 import * as dotenv from "dotenv";
 
@@ -8,17 +7,15 @@ const config = dotenv.config(".env").parsed;
 
 const client = new Client({ node: config["ELASTICSEARCH_SERVER"] });
 
-function CreateReview(access_token, user, review) {
+function CreateReview(user, review) {
     return new Promise(async(resolve, reject) => {
         try {
-            var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username;
             var rev = review.review;
             if (user.role === "user") {
-                rev["creator_username"] = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username;
+                rev["creator_username"] = user.username;
             } else {
                 rev["creator_username"] = review.username;
             }
-            console.log(review)
             var newReview = new Review(rev),
                 res = await db.createQuery("Reviews", Object.keys(rev), '"' + Object.values(rev).join('", "') + '"');
             if (review.tags) {
@@ -35,26 +32,21 @@ function CreateReview(access_token, user, review) {
     });
 }
 
-function UpdateReview(access_token, user, review) {
+function UpdateReview(review) {
     return new Promise(async(resolve, reject) => {
         try {
-            var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username;
-            if (user.role === "admin" || user.username === username) {
-                var rev = review.review;
-                if (review.tags) {
-                    var tags = review.tags.map(tag => `('${tag}')`).join(",");
-                    await db.createTagsQuery(tags);
-                    tags = review.tags.map(tag => `('${review.review.review_id}', '${tag}')`).join(',');
-                    await db.deleteQuery("ReviewTags", "review_id", review.review.review_id);
-                    await db.createRevTagsQuery("ReviewTags", "review_id, tag", tags);
-                }
-                var revToUpd = new Review(rev),
-                    colsVals = Object.entries(rev).map(([key, value]) => `${key} = '${value}'`).join(', ')
-                await db.updateQuery("Reviews", "review_id", revToUpd.review_id, colsVals);
-                resolve(true);
-            } else {
-                reject(false);
+            var rev = review.review;
+            if (review.tags) {
+                var tags = review.tags.map(tag => `('${tag}')`).join(",");
+                await db.createTagsQuery(tags);
+                tags = review.tags.map(tag => `('${review.review.review_id}', '${tag}')`).join(',');
+                await db.deleteQuery("ReviewTags", "review_id", review.review.review_id);
+                await db.createRevTagsQuery("ReviewTags", "review_id, tag", tags);
             }
+            var revToUpd = new Review(rev),
+                colsVals = Object.entries(rev).map(([key, value]) => `${key} = '${value}'`).join(', ')
+            await db.updateQuery("Reviews", "review_id", revToUpd.review_id, colsVals);
+            resolve(true);
         } catch (error) {
             console.error(error);
             reject(error);
@@ -62,19 +54,15 @@ function UpdateReview(access_token, user, review) {
     });
 }
 
-function DeleteReview(access_token, user, review) {
+function DeleteReview(review) {
     return new Promise(async(resolve, reject) => {
         try {
-            var username = jwt.verify(access_token, config["SECRET_JWT_KEY"]).username;
-            if (user.role === "admin" || user.username === username) {
-                var table = "Reviews",
-                    column = "review_id",
-                    value = review.review_id,
-                    res = await db.deleteQuery(table, column, value);
-                resolve(true);
-            } else {
-                reject(false);
-            }
+            var res = await db.deleteQuery(
+                table = "Reviews",
+                column = "review_id",
+                value = review.review_id
+            );
+            resolve(true);
         } catch (error) {
             console.error(error);
             reject(error);
@@ -140,8 +128,7 @@ function GetUserReviews(username) {
 function GetCategories() {
     return new Promise(async(resolve, reject) => {
         try {
-            var table = "Categories",
-                res = await db.getQuery(table),
+            var res = await db.getQuery("Categories"),
                 categories = res.map(obj => obj.category);
             resolve(categories);
         } catch (error) {
@@ -175,14 +162,6 @@ function SearchIndex(query) {
                             fields: ['content', 'creator_username', 'title', 'product_name', 'comments.text', 'tags.tag']
                         }
                     },
-                },
-            });
-            var data = await client.search({
-                index: 'reviews_2023-04-26',
-                body: {
-                    query: {
-                        match_all: {}
-                    }
                 },
             });
             resolve(result.hits.hits.map((hit) => hit._source));

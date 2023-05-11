@@ -4,10 +4,10 @@ import * as dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 import indexDB from "./DBIndex.js";
-import * as revFuncs from "./ReviewFuncs.js";
-import * as userFuncs from "./UserFuncs.js";
-import * as rateFuncs from "./RatingFuncs.js";
-import * as commentFuncs from "./CommentFuncs.js"
+import * as revFuncs from "./Functions/ReviewFuncs.js";
+import * as userFuncs from "./Functions/UserFuncs.js";
+import * as rateFuncs from "./Functions/RatingFuncs.js";
+import * as commentFuncs from "./Functions/CommentFuncs.js"
 
 const config = dotenv.config(".env").parsed;
 var corsOptions = {
@@ -23,17 +23,11 @@ app.use(express.json());
 app.use(cookieParser());
 
 indexDB();
-
 setInterval(() => {
     indexDB();
 }, 12 * 60 * 60 * 1000);
 
 app.post("/registration", function(req, res) {
-    if (Object.keys(req.body).length === 0) {
-        res.status(400)
-        res.send("Fields cannot be empty")
-        return
-    }
     userFuncs.CreateUser(req.body)
         .then(result => {
             res.sendStatus(200);
@@ -46,11 +40,6 @@ app.post("/registration", function(req, res) {
 })
 
 app.post("/login", function(req, res) {
-    if (Object.keys(req.body).length === 0) {
-        res.status(400);
-        res.send("Fields cannot be empty");
-        return;
-    }
     let username = '"' + req.body.username + '"';
     userFuncs.AuthenticateUser(username, req.body.password)
         .then(result => {
@@ -62,20 +51,15 @@ app.post("/login", function(req, res) {
         })
         .catch(err => {
             console.error(err);
-            res.status(400);
+            res.status(401);
             res.send(err.message);
         });
 });
 
 app.post("/review", async function(req, res) {
-    if (Object.keys(req.body).length === 0) {
-        res.status(400);
-        res.send("Fields cannot be empty");
-        return;
-    }
     try {
         var user = await userFuncs.AuthorizeUser(req.cookies.access_token);
-        await revFuncs.CreateReview(req.cookies.access_token, user, req.body);
+        await revFuncs.CreateReview(user, req.body);
         res.sendStatus(200);
     } catch (err) {
         console.error(err);
@@ -87,7 +71,7 @@ app.post("/review", async function(req, res) {
 app.put("/review", async function(req, res) {
     try {
         var user = await userFuncs.AuthorizeUser(req.cookies.access_token);
-        await revFuncs.UpdateReview(req.cookies.access_token, user, req.body);
+        await revFuncs.UpdateReview(req.body);
         res.sendStatus(200);
     } catch (err) {
         console.error(err);
@@ -99,7 +83,7 @@ app.put("/review", async function(req, res) {
 app.delete("/review", async function(req, res) {
     try {
         var user = await userFuncs.AuthorizeUser(req.cookies.access_token);
-        await revFuncs.DeleteReview(req.cookies.access_token, user, req.body);
+        await revFuncs.DeleteReview(req.body);
         res.sendStatus(200);
     } catch (err) {
         console.error(err);
@@ -123,17 +107,18 @@ app.get("/users", async function(req, res) {
 
 app.get("/reviews", async function(req, res) {
     try {
-        var popularReviews = await revFuncs.GetPopularReviews(),
-            latestReviews = await revFuncs.GetLatestReviews();
-        var reviews = { 'popularReviews': popularReviews, 'latestReviews': latestReviews };
+        var reviews = {
+            'popularReviews': await revFuncs.GetPopularReviews(),
+            'latestReviews': await revFuncs.GetLatestReviews()
+        };
         try {
             var auth = await userFuncs.AuthorizeUser(req.cookies.access_token)
         } catch {
             console.log("Unauthorized")
         }
         if (auth) {
-            reviews.liked_reviews = await rateFuncs.GetUsersLikes(req.cookies.access_token);
-            reviews.rated_reviews = await rateFuncs.GetUsersRate(req.cookies.access_token);
+            reviews.liked_reviews = await rateFuncs.GetUsersLikes(auth.username);
+            reviews.rated_reviews = await rateFuncs.GetUsersRate(auth.username);
         }
         res.status(200);
         res.send(reviews);
@@ -211,8 +196,8 @@ app.post("/search", async function(req, res) {
 
 app.post("/rate", async function(req, res) {
     try {
-        await userFuncs.AuthorizeUser(req.cookies.access_token);
-        await rateFuncs.CreateRate(req.body.rate, req.body.review_id, req.cookies.access_token, req.body.rated);
+        var user = await userFuncs.AuthorizeUser(req.cookies.access_token);
+        await rateFuncs.CreateRate(req.body.rate, req.body.review_id, user.username, req.body.rated);
         res.sendStatus(200);
     } catch (err) {
         console.error(err);
@@ -223,8 +208,8 @@ app.post("/rate", async function(req, res) {
 
 app.post("/comment", async function(req, res) {
     try {
-        await userFuncs.AuthorizeUser(req.cookies.access_token);
-        await commentFuncs.CreateComment(req.body.comment, req.body.review_id, req.cookies.access_token);
+        var user = await userFuncs.AuthorizeUser(req.cookies.access_token);
+        await commentFuncs.CreateComment(req.body.comment, req.body.review_id, user.username);
         res.sendStatus(200);
     } catch (err) {
         console.error(err);
@@ -235,8 +220,8 @@ app.post("/comment", async function(req, res) {
 
 app.post("/like", async function(req, res) {
     try {
-        await userFuncs.AuthorizeUser(req.cookies.access_token);
-        await rateFuncs.CreateLike(req.body.review_id, req.body.is_liked, req.cookies.access_token);
+        var user = await userFuncs.AuthorizeUser(req.cookies.access_token);
+        await rateFuncs.CreateLike(req.body.review_id, req.body.is_liked, user.username);
         res.sendStatus(200);
     } catch (err) {
         console.error(err);
@@ -246,5 +231,5 @@ app.post("/like", async function(req, res) {
 });
 
 app.listen(config["PORT"], () => {
-    console.log(`Example app listening on port ${config["PORT"]}`)
+    console.log(`Pumba Reviews app listening on port ${config["PORT"]}`)
 })

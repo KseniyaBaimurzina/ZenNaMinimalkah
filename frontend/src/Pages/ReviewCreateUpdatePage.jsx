@@ -13,7 +13,7 @@ import {
     IconButton
 } from "@material-ui/core";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import MarkdownInput from "../Components/Markdown";
+import Markdown from "../Components/Markdown";
 import api from "../axios";
 
 const ReviewCreateUpdatePage = () => {
@@ -78,7 +78,6 @@ const ReviewCreateUpdatePage = () => {
                 tags: tags,
                 username: username
             });
-            console.log(tags)
             navigate(-1);
         } catch (err) {
             console.error(err);
@@ -165,7 +164,7 @@ const ReviewCreateUpdatePage = () => {
                         value={productName}
                         onChange={(e) => setProductName(e.target.value)}
                     />
-                    <MarkdownInput value={content} onChange={setContent} />
+                    <Markdown value={content} onChange={setContent} />
                     <FormControl fullWidth margin="normal" required>
                     <InputLabel id="rating-label">
                         <FormattedMessage id="rating" defaultMessage="Rating" />

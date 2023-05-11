@@ -7,7 +7,7 @@ import { ThemeProvider } from '@material-ui/styles';
 import { darkTheme, lightTheme } from "../Styles/Theme";
 import useStyles from "../Styles/AppStyles";
 
-const Tags = () => {
+const TagCloud = () => {
     const [tags, setTags] = useState([]);
     const [language] = useState(localStorage.getItem("language") || "en-US");
     const classes = useStyles();
@@ -18,7 +18,6 @@ const Tags = () => {
         try {
             const res = await api.get("/tags");
             setTags(res.data);
-            
         } catch (err) {
             console.error(err)
         };
@@ -61,4 +60,4 @@ const Tags = () => {
     );
 }
 
-export default Tags;
+export default TagCloud;

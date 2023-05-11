@@ -81,7 +81,6 @@ const ReviewPost = ({ review, liked, rated, username=null }) => {
             </Button> 
         </div>
         ) : null;
-    
 
     return (
         <ThemeProvider theme={theme}>

@@ -7,7 +7,7 @@ import { IntlProvider, FormattedMessage } from "react-intl";
 import { Container, Typography, Box, TextField, Button, Link } from '@material-ui/core';
 import useStyles from '../Styles/AppStyles';
 
-export default function RegisterForm() {
+export default function RegistrationForm() {
     const navigate = useNavigate();
     const classes = useStyles();
     const { register, handleSubmit, formState: { errors } } = useForm();

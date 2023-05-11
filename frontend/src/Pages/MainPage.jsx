@@ -1,12 +1,12 @@
 import Reviews from "../Components/Reviews";
 import Header from "../Components/Header";
-import Tags from "../Components/TagCloud";
+import TagCloud from "../Components/TagCloud";
 
 export default function MainPage(){
     return(
         <div>
             <Header />
-            <Tags />
+            <TagCloud />
             <Reviews />
         </div>
     )

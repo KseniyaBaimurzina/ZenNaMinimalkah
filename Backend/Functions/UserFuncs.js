@@ -1,5 +1,5 @@
-import * as db from "./DBRequests.js";
-import User from "./DBModels/user.js";
+import * as db from "../DBRequests.js";
+import User from "../DBModels/user.js";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
@@ -11,18 +11,19 @@ function CreateUser(user) {
         try {
             var newUser = new User(user);
         } catch (error) {
-            reject(new Error(error));
+            reject(error);
         }
         newUser.password = GetHashedPassword(newUser.password);
-        let userKeys = Object.keys(newUser);
-        let userValues = '"' + Object.values(newUser).join('", "') + '"';
-        let table = "Users";
-        db.createQuery(table, userKeys, userValues)
+        db.createQuery(
+                table = "Users",
+                userKeys = Object.keys(newUser),
+                userValues = '"' + Object.values(newUser).join('", "') + '"'
+            )
             .then(res => {
                 resolve(true);
             })
             .catch(err => {
-                reject(new Error(err));
+                reject(err);
             })
     });
 }
@@ -61,9 +62,10 @@ function VerifyPassword(plainPassword, hashedPassword) {
 
 function AuthenticateUser(username, password) {
     return new Promise((resolve, reject) => {
-        var table = "Users",
-            column = "username";
-        db.getQuery(table, column, username)
+        db.getQuery(
+                table = "Users",
+                column = "username",
+                username)
             .then(res => {
                 if (VerifyPassword(password, res[0].password)) {
                     resolve(res[0].role);
@@ -72,7 +74,7 @@ function AuthenticateUser(username, password) {
                 }
             })
             .catch(err => {
-                reject(new Error(err))
+                reject(err);
             })
     })
 }
@@ -83,10 +85,11 @@ function AuthorizeUser(access_token) {
             if (err) {
                 reject(err);
             } else {
-                var table = "Users",
-                    column = "username",
-                    username = "'" + verifyRes.username + "'";
-                db.getQuery(table, column, username)
+                db.getQuery(
+                        table = "Users",
+                        column = "username",
+                        username = "'" + verifyRes.username + "'"
+                    )
                     .then(res => {
                         resolve(res[0]);
                     })

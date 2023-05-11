@@ -1,6 +1,5 @@
 import { createConnection } from 'mysql2';
 import * as dotenv from 'dotenv';
-import crypto from "crypto";
 
 var config = dotenv.config(".env").parsed
 

@@ -1,8 +1,7 @@
 import api from "../axios";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 const usePostRating = ({ review_id, rated }) => {
-    const [isRated, setIsRated] = useState(false);
 
     const postRating = useCallback(async (rate) => {
         try {
@@ -11,15 +10,13 @@ const usePostRating = ({ review_id, rated }) => {
                 rate: rate,
                 rated: rated
             });
-            setIsRated(true);
-            console.log(res);
             return res.data;
         } catch (err) {
             console.error(err);
         }
     }, [review_id, rated]);
 
-    return { isRated, postRating };
+    return { postRating };
 };
 
 export default usePostRating;

@@ -2,15 +2,9 @@ import {Routes, BrowserRouter, Route } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/styles';
 import { CssBaseline } from '@material-ui/core';
 import { IntlProvider } from 'react-intl';
-import Login from './Forms/LoginForm';
-import MainPage from './Pages/MainPage';
-import RegisterForm from './Forms/RegistrationForm';
-import UserPage from './Pages/UserPage';
-import ReviewCreateUpdatePage from './Pages/PostReviewPage';
-import SearchResult from './Pages/SearchPage';
-import ReviewPage from './Pages/ReviewPage';
-import AdminPage from './Pages/AdminPage';
 import { lightTheme, darkTheme } from './Styles/Theme';
+import { LoginForm, RegistrationForm} from './Forms'
+import { MainPage, AdminPage, ReviewCreateUpdatePage, ReviewPage, SearchPage, UserPage } from './Pages'
 
 function App() {
     const theme = localStorage.getItem("isDarkMode") === 'true' ? darkTheme : lightTheme;
@@ -24,11 +18,11 @@ function App() {
                             <Route path="/" element={<MainPage />} />
                             <Route path="/review-page" element={<ReviewPage />} />
                             <Route path="/users-list" element={<AdminPage />} />
-                            <Route path="/login" element={<Login />} />
+                            <Route path="/login" element={<LoginForm />} />
                             <Route path="/user/reviews" element={<UserPage />} />
-                            <Route path="/search-result" element={<SearchResult />} />
+                            <Route path="/search-result" element={<SearchPage />} />
                             <Route path="/create-review" element={<ReviewCreateUpdatePage />} />
-                            <Route path="/registration" element={<RegisterForm />} />
+                            <Route path="/registration" element={<RegistrationForm />} />
                         </Routes>
                     </BrowserRouter>
             </IntlProvider>

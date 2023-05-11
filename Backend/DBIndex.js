@@ -5,6 +5,38 @@ import connection from './DBConnection.js';
 const config = dotenv.config().parsed;
 const client = new Client({ node: config["ELASTICSEARCH_SERVER"] });
 
+const INDEX_MODEL = {
+    body: {
+        mappings: {
+            properties: {
+                review_id: { type: 'integer' },
+                creator_username: { type: 'text' },
+                category: { type: 'text' },
+                title: { type: 'text' },
+                product_name: { type: 'text' },
+                content: { type: 'text' },
+                rate: { type: 'integer' },
+                image_path: { type: 'text' },
+                creation_time: { type: 'date' },
+                comments: {
+                    properties: {
+                        comment_id: { type: 'integer' },
+                        creator_username: { type: 'text' },
+                        text: { type: 'text' },
+                        creation_time: { type: 'date' }
+                    }
+                },
+                review_tags: {
+                    properties: {
+                        tag: { type: 'text' },
+                        review_id: { type: 'integer' }
+                    }
+                }
+            }
+        }
+    }
+}
+
 async function checkIndexExists(indexName) {
     try {
         const result = await client.indices.exists({ index: indexName });
@@ -17,38 +49,9 @@ async function checkIndexExists(indexName) {
 
 async function createIndex(indexName) {
     try {
-        await client.indices.create({
-            index: indexName,
-            body: {
-                mappings: {
-                    properties: {
-                        review_id: { type: 'integer' },
-                        creator_username: { type: 'text' },
-                        category: { type: 'text' },
-                        title: { type: 'text' },
-                        product_name: { type: 'text' },
-                        content: { type: 'text' },
-                        rate: { type: 'integer' },
-                        image_path: { type: 'text' },
-                        creation_time: { type: 'date' },
-                        comments: {
-                            properties: {
-                                comment_id: { type: 'integer' },
-                                creator_username: { type: 'text' },
-                                text: { type: 'text' },
-                                creation_time: { type: 'date' }
-                            }
-                        },
-                        review_tags: {
-                            properties: {
-                                tag: { type: 'text' },
-                                review_id: { type: 'integer' }
-                            }
-                        }
-                    }
-                }
-            }
-        });
+        var indexModel = INDEX_MODEL;
+        indexModel.index = indexName;
+        await client.indices.create(indexModel);
         console.log(`Index ${indexName} created successfully.`);
     } catch (error) {
         console.error(`An error occurred while creating index ${indexName}: ${error}`);

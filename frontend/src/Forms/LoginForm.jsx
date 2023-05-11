@@ -16,7 +16,7 @@ import {
     Box
 } from "@material-ui/core";
 
-export default function Login() {
+export default function LoginForm() {
     const navigate = useNavigate();
     const classes = useStyles();
     const [username, setUsername] = useState("");
