@@ -58,7 +58,7 @@ const Header = () => {
             <IntlProvider locale={language} messages={require(`../Languages/${language}.json`)}>
                 <AppBar position="sticky" >
                     <Toolbar>
-                        <Typography variant="h6">
+                        <Typography variant="h6" className={classes.clickable} onClick={()=>navigate("/")}>
                             <FormattedMessage id="headerTitle" defaultMessage="PUMBA REVIEWS" />
                         </Typography>
                         {myReviewsButton}
