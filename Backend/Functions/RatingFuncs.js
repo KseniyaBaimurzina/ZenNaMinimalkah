@@ -7,9 +7,9 @@ function GetRating(review_id) {
     return new Promise(async(resolve, reject) => {
         try {
             var res = await db.getQuery(
-                table = "Ratings",
-                column = "review_id",
-                value = review_id
+                "Ratings",
+                "review_id",
+                review_id
             );
             var averageRating = res.reduce((acc, curr) => acc + curr.rate, 0) / res.length;
             resolve(averageRating);
@@ -24,9 +24,9 @@ function GetUsersRate(username) {
     return new Promise(async(resolve, reject) => {
         try {
             var res = await db.getQuery(
-                table = "Ratings",
-                column = "creator_username",
-                value = "'" + username + "'"
+                "Ratings",
+                "creator_username",
+                "'" + username + "'"
             );
             var reviewIds = res.map(row => row.review_id);
             resolve(reviewIds);
@@ -44,9 +44,7 @@ function CreateRate(rate, review_id, username, rated) {
                 await db.updateQuery("Ratings", "(creator_username, review_id)", `(${username}, '${review_id}')`, "rate", rate, )
             } else {
                 await db.createQuery(
-                    table = "Ratings",
-                    columns = ["review_id", "creator_username", "rate"],
-                    values = [review_id, "'" + username + "'", rate]
+                    "Ratings", ["review_id", "creator_username", "rate"], [review_id, "'" + username + "'", rate]
                 );
             }
             resolve(true);
@@ -62,14 +60,10 @@ function CreateLike(review_id, is_liked, username) {
         try {
             var res = is_liked ?
                 await db.createQuery(
-                    table = "Likes",
-                    columns = ["review_id", "creator_username"],
-                    values = [review_id, "'" + username + "'"]
+                    "Likes", ["review_id", "creator_username"], [review_id, "'" + username + "'"]
                 ) :
                 await db.deleteLikeQuery(
-                    table = "Likes",
-                    columns = ["review_id", "creator_username"],
-                    values = [review_id, "'" + username + "'"]
+                    "Likes", ["review_id", "creator_username"], [review_id, "'" + username + "'"]
                 );
             resolve(true);
         } catch (error) {
@@ -83,9 +77,9 @@ function GetUsersLikes(username) {
     return new Promise(async(resolve, reject) => {
         try {
             var res = await db.getQuery(
-                table = "Likes",
-                column = "creator_username",
-                value = "'" + username + "'"
+                "Likes",
+                "creator_username",
+                "'" + username + "'"
             );
             var reviewIds = res.map(row => row.review_id);
             resolve(reviewIds);

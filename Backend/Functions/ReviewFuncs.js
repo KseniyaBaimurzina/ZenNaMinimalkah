@@ -58,9 +58,9 @@ function DeleteReview(review) {
     return new Promise(async(resolve, reject) => {
         try {
             var res = await db.deleteQuery(
-                table = "Reviews",
-                column = "review_id",
-                value = review.review_id
+                "Reviews",
+                "review_id",
+                review.review_id
             );
             resolve(true);
         } catch (error) {

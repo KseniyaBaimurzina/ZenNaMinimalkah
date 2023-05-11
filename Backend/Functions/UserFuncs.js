@@ -15,9 +15,9 @@ function CreateUser(user) {
         }
         newUser.password = GetHashedPassword(newUser.password);
         db.createQuery(
-                table = "Users",
-                userKeys = Object.keys(newUser),
-                userValues = '"' + Object.values(newUser).join('", "') + '"'
+                "Users",
+                Object.keys(newUser),
+                '"' + Object.values(newUser).join('", "') + '"'
             )
             .then(res => {
                 resolve(true);
@@ -63,8 +63,8 @@ function VerifyPassword(plainPassword, hashedPassword) {
 function AuthenticateUser(username, password) {
     return new Promise((resolve, reject) => {
         db.getQuery(
-                table = "Users",
-                column = "username",
+                "Users",
+                "username",
                 username)
             .then(res => {
                 if (VerifyPassword(password, res[0].password)) {
@@ -86,9 +86,9 @@ function AuthorizeUser(access_token) {
                 reject(err);
             } else {
                 db.getQuery(
-                        table = "Users",
-                        column = "username",
-                        username = "'" + verifyRes.username + "'"
+                        "Users",
+                        "username",
+                        "'" + verifyRes.username + "'"
                     )
                     .then(res => {
                         resolve(res[0]);
