@@ -22,12 +22,19 @@ const ReviewPost = ({ review, liked, rated, username=null }) => {
     const currentPath = location.pathname;
     const theme = localStorage.getItem("isDarkMode") === 'true' ? darkTheme : lightTheme;
 
-    const { postRating } = usePostRating({ review_id: review.review_id, rated: rated });
+    const postRating = usePostRating({
+        review_id: review.review_id,
+        rated: rated
+    });
+
+    const handleRate = useCallback((event,rating) =>{
+        postRating.postRating(rating)
+    },[]);
 
     const postLike = usePostLike({
         review_id: review.review_id,
         initialLikes: review.like_count,
-        initialIsLiked: liked,
+        initialIsLiked: liked
     });
 
     const handleLikeButtonClick = useCallback(() => {
@@ -104,12 +111,11 @@ const ReviewPost = ({ review, liked, rated, username=null }) => {
                         <Typography variant="h5">
                             {review.title}
                             <Rating
-                                name="rating"
+                                name={`rating-${review.review_id}`}
+                                // name="rating"
                                 value={review.users_rating}
                                 precision={0.5}
-                                onChange={(event, newValue) => {
-                                    postRating(newValue)
-                                }}
+                                onChange={(e, value) =>handleRate(e,value)}
                             />
                         </Typography>
                         <Typography variant="h6">

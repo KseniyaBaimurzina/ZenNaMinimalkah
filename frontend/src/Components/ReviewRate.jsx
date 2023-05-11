@@ -6,13 +6,13 @@ const usePostRating = ({ review_id, rated }) => {
 
     const postRating = useCallback(async (rate) => {
         try {
+            console.log(review_id)
             const res = await api.post("/rate/", {
                 review_id: review_id,
                 rate: rate,
                 rated: rated
             });
             setIsRated(true);
-            console.log(res);
             return res.data;
         } catch (err) {
             console.error(err);

@@ -123,6 +123,21 @@ const createRevTagsQuery = function(table, column, value) {
             });
     });
 }
+
+const updateCreateQuery = function(table, columns, values, updCol, updVal) {
+    return new Promise((resolve, reject) => {
+        connection.query(`INSERT INTO ${table} (${columns}) VALUES (${values}) ON DUPLICATE KEY UPDATE ${updCol} = ${updVal};`,
+            function(err, res) {
+                if (err) {
+                    console.error(err);
+                    reject(err);
+                } else {
+                    resolve(res);
+                }
+            });
+    });
+}
+
 const updateQuery = function(table, checkCol, checkValue, updCol, updValue = null) {
     return new Promise((resolve, reject) => {
         var sqlExtra = updValue === null ? '' : ` = ${updValue}`
@@ -171,6 +186,7 @@ export {
     createQuery,
     createTagsQuery,
     createRevTagsQuery,
+    updateCreateQuery,
     updateQuery,
     deleteQuery,
     deleteLikeQuery,

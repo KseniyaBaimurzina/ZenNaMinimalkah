@@ -37,16 +37,12 @@ function GetUsersRate(username) {
     });
 }
 
-function CreateRate(rate, review_id, username, rated) {
+function CreateRate(rate, review_id, username) {
     return new Promise(async(resolve, reject) => {
         try {
-            if (rated) {
-                await db.updateQuery("Ratings", "(creator_username, review_id)", `(${username}, '${review_id}')`, "rate", rate)
-            } else {
-                await db.createQuery(
-                    "Ratings", ["review_id", "creator_username", "rate"], [review_id, "'" + username + "'", rate]
-                );
-            }
+            await db.updateCreateQuery(
+                "Ratings", ["review_id", "creator_username", "rate"], [review_id, "'" + username + "'", rate], "rate", rate
+            );
             resolve(true);
         } catch (error) {
             console.error(error);
