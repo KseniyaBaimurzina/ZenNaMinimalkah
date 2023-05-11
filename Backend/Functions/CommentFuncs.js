@@ -11,9 +11,9 @@ function CreateComment(comment, review_id, username) {
             }
             var newComment = new Comment(comm);
             await db.createQuery(
-                table = "Comments",
-                columns = Object.keys(comm),
-                values = '"' + Object.values(comm).join('", "') + '"'
+                "Comments",
+                Object.keys(comm),
+                '"' + Object.values(comm).join('", "') + '"'
             );
             resolve(true);
         } catch (error) {
