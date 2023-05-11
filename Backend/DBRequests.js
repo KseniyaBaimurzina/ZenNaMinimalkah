@@ -35,7 +35,7 @@ const getLikesRow = function() {
 const getPopularReviews = function() {
     return new Promise((resolve, reject) => {
         connection.query(`SELECT Reviews.*,` +
-            `COUNT(Likes.review_id) AS like_count, ` +
+            `COUNT(DISTINCT Likes.creator_username) AS like_count, ` +
             `COALESCE(AVG(Ratings.rate), 0) AS users_rating ` +
             `FROM Reviews ` +
             `LEFT JOIN Likes ON Reviews.review_id = Likes.review_id ` +
