@@ -18,7 +18,7 @@ function CreateReview(user, review) {
             }
             var newReview = new Review(rev),
                 res = await db.createQuery("Reviews", Object.keys(rev), '"' + Object.values(rev).join('", "') + '"');
-            if (review.tags) {
+            if (review.tags.length !== 0) {
                 var tags = review.tags.map(tag => `('${tag}')`).join(",");
                 await db.createTagsQuery(tags);
                 tags = review.tags.map(tag => `('${res.insertId}', '${tag}')`).join(',');
@@ -36,7 +36,7 @@ function UpdateReview(review) {
     return new Promise(async(resolve, reject) => {
         try {
             var rev = review.review;
-            if (review.tags) {
+            if (review.tags.length !== 0) {
                 var tags = review.tags.map(tag => `('${tag}')`).join(",");
                 await db.createTagsQuery(tags);
                 tags = review.tags.map(tag => `('${review.review.review_id}', '${tag}')`).join(',');
