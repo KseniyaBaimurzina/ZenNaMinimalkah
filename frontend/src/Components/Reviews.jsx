@@ -45,7 +45,11 @@ const Reviews = () => {
                         <FormattedMessage id="popularReviewsTitle" defaultMessage="Popular Reviews" />
                     </Typography>
                     {popularReviews.map((review) => (
-                        <ReviewPost key={review.review_id} review={review} liked={likedReviews.includes(review.review_id)} rated={ratedReviews.includes(review.review_id)} />
+                        <ReviewPost 
+                            key={review.review_id} 
+                            review={review} 
+                            liked={likedReviews.includes(review.review_id)} 
+                            rated={ratedReviews.includes(review.review_id)} />
                     ))}
                     </Grid>
                     <Grid item xs={12} md={6}>

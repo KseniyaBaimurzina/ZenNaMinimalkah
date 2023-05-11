@@ -169,7 +169,7 @@ const UserPage = () => {
                 </Container>
                 {sortReviews(userReviews, sortOption, filterOption).map((review) => (
                 <div key={review.review_id} >
-                    <ReviewPost review={review} liked={review.liked} username={username}/>
+                    <ReviewPost review={review} liked={review.liked} username={username} rated={review.rated}/>
                         
                 </div>
                 ))}
