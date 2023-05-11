@@ -91,7 +91,7 @@ function AuthorizeUser(access_token) {
                         resolve(res[0]);
                     })
                     .catch(err => {
-                        reject(false);
+                        reject(err);
                     });
             }
         });

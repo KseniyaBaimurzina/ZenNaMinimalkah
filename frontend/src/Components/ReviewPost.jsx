@@ -14,6 +14,8 @@ import { lightTheme, darkTheme } from "../Styles/Theme";
 const ReviewPost = ({ review, liked, rated, username=null }) => {
     const classes = useStyles();
     const [likedByCurrentUser, setLikedByCurrentUser] = useState(liked);
+    const [showFullContent, setShowFullContent] = useState(false);
+    const [content, setContent] = useState(review.content.split(" ").slice(0, 50).join(" ") + "...");
     const [language] = useState(localStorage.getItem("language") || "en-US");
     const navigate = useNavigate();
     const location = useLocation();
@@ -32,9 +34,6 @@ const ReviewPost = ({ review, liked, rated, username=null }) => {
         postLike.postLike();
         setLikedByCurrentUser(!likedByCurrentUser);
     }, [likedByCurrentUser, postLike]);
-    
-    const words = review.content.split(" ");
-    const content = words.slice(0, 50).join(" ") + "...";
 
     const tagSearch = (async(searchTag) =>{
         try {
@@ -48,6 +47,11 @@ const ReviewPost = ({ review, liked, rated, username=null }) => {
     const handleOpen = useCallback(() => {
         navigate("/review-page", { state: { review: review, liked: likedByCurrentUser, rated: rated }});
     }, [navigate, review, likedByCurrentUser, rated]);
+
+    const handleOpenText = () => {
+        setContent(review.content);
+        setShowFullContent(true);
+    }
 
     const handleUpdateReview = (review) => {
         navigate("/create-review", {state:{review: review, username: username}})
@@ -121,20 +125,18 @@ const ReviewPost = ({ review, liked, rated, username=null }) => {
                                 />
                             ))}
                         </Typography>
-                        <div onClick={handleOpen} className={classes.clickable}>
-                            <Typography variant="subtitle1">{review.product_name}</Typography>
+                            <Typography variant="subtitle1" onClick={handleOpen} className={classes.clickable}>{review.product_name}</Typography>
                             <Typography variant="body1">
                                 <ReactMarkdown>{content}</ReactMarkdown>
-                                {words.length > 50 && (
-                                    <Button variant="text" onClick={handleOpen}>
+                                {!showFullContent && review.content.length > 50 && (
+                                    <Button variant="text" onClick={handleOpenText}>
                                         <FormattedMessage id="readMoreTitle" defaultMessage="read more" />
                                     </Button>
                                 )}
                             </Typography>
-                            <Typography variant="h6">
+                            <Typography variant="h6" onClick={handleOpen} className={classes.clickable}>
                                 <FormattedMessage id="rating" defaultMessage="Rating" />: {review.rate}
                             </Typography>
-                        </div>
                     </CardContent>
                     <CardActions disableSpacing color="secondary">
                         <IconButton

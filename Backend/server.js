@@ -40,7 +40,7 @@ app.post("/registration", function(req, res) {
         })
         .catch(err => {
             console.error(err);
-            res.status(err.status);
+            res.status(400);
             res.send(err.message);
         });
 })
@@ -62,7 +62,7 @@ app.post("/login", function(req, res) {
         })
         .catch(err => {
             console.error(err);
-            res.status(err.status);
+            res.status(400);
             res.send(err.message);
         });
 });
@@ -79,7 +79,7 @@ app.post("/review", async function(req, res) {
         res.sendStatus(200);
     } catch (err) {
         console.error(err);
-        res.status(err.status);
+        res.status(400);
         res.send(err.message);
     }
 })
@@ -91,7 +91,7 @@ app.put("/review", async function(req, res) {
         res.sendStatus(200);
     } catch (err) {
         console.error(err);
-        res.status(err.status);
+        res.status(500);
         res.send(err.message);
     }
 });
@@ -103,7 +103,7 @@ app.delete("/review", async function(req, res) {
         res.sendStatus(200);
     } catch (err) {
         console.error(err);
-        res.status(err.status);
+        res.status(500);
         res.send(err.message);
     }
 });
@@ -116,7 +116,7 @@ app.get("/users", async function(req, res) {
         res.send(users);
     } catch (err) {
         console.error(err);
-        res.status(err.status);
+        res.status(500);
         res.send(err.message);
     }
 })
@@ -139,7 +139,7 @@ app.get("/reviews", async function(req, res) {
         res.send(reviews);
     } catch (err) {
         console.error(err);
-        res.status(err.status);
+        res.status(500);
         res.send(err.message);
     }
 })
@@ -156,7 +156,7 @@ app.get("/user/reviews", async function(req, res) {
         res.send(userReviews);
     } catch (err) {
         console.error(err);
-        res.status(err.status);
+        res.status(500);
         res.send(err.message);
     }
 })
@@ -168,7 +168,7 @@ app.get("/review/comments", async function(req, res) {
         res.send(comments);
     } catch (err) {
         console.error(err);
-        res.status(err.status);
+        res.status(500);
         res.send(err.message);
     }
 })
@@ -180,7 +180,7 @@ app.get("/categories", async function(req, res) {
         res.send(categories);
     } catch (err) {
         console.error(err);
-        res.status(err.status);
+        res.status(500);
         res.send(err.message);
     }
 })
@@ -192,7 +192,7 @@ app.get("/tags", async function(req, res) {
         res.send(tags);
     } catch (err) {
         console.error(err);
-        res.status(err.status);
+        res.status(500);
         res.send(err.message);
     }
 })
@@ -204,7 +204,7 @@ app.post("/search", async function(req, res) {
         res.send(searchResult);
     } catch (err) {
         console.error(err);
-        res.status(err.status);
+        res.status(500);
         res.send(err.message);
     }
 })
@@ -216,7 +216,7 @@ app.post("/rate", async function(req, res) {
         res.sendStatus(200);
     } catch (err) {
         console.error(err);
-        res.status(err.status);
+        res.status(400);
         res.send(err.message);
     }
 })
@@ -228,7 +228,7 @@ app.post("/comment", async function(req, res) {
         res.sendStatus(200);
     } catch (err) {
         console.error(err);
-        res.status(err.status);
+        res.status(400);
         res.send(err.message);
     }
 })
@@ -240,7 +240,7 @@ app.post("/like", async function(req, res) {
         res.sendStatus(200);
     } catch (err) {
         console.error(err);
-        res.status(err.status);
+        res.status(400);
         res.send(err.message);
     }
 });
