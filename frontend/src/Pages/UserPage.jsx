@@ -76,7 +76,7 @@ const UserPage = () => {
             case "thisWeek":
                 const today = new Date();
                 const weekAgo = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
-                filteredReviews = filteredReviews.filter((review) => new Date(review.date) >= weekAgo);
+                filteredReviews = filteredReviews.filter((review) => new Date(review.creation_time) >= weekAgo);
                 break;
             case "highlyRated":
                 filteredReviews = filteredReviews.filter((review) => review.rate >= 6);

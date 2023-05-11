@@ -114,11 +114,11 @@ const useStyles = makeStyles((theme) => ({
     homeHeadings: {
         marginLeft: '15px'
     },
-    homePageButton: {
+    createReviewButton: {
         float: 'right', 
         padding: '1em'
     },
-    createReviewButton: {
+    homePageButton: {
         float: 'left', 
         padding: '1em'
     }
