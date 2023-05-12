@@ -5,7 +5,7 @@ import { IntlProvider, FormattedMessage } from "react-intl";
 
 const Markdown = ({ value, onChange }) => {
     const [markdownSrc, setMarkdownSrc] = useState(value);
-    const [language] = useState(localStorage.getItem("language") || "en")
+    const [language] = useState(localStorage.getItem("language") || "en-US")
 
     const handleChange = (event) => {
         const newMarkdownSrc = event.target.value;
