@@ -53,7 +53,7 @@ function GetHashedPassword(password) {
 }
 
 function GenerateJWT(username) {
-    return jwt.sign({ username: username }, config["SECRET_JWT_KEY"], { expiresIn: '18000s' });
+    return jwt.sign({ username: username }, config["SECRET_JWT_KEY"], { expiresIn: '86400s' });
 }
 
 function VerifyPassword(plainPassword, hashedPassword) {
