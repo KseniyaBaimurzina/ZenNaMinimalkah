@@ -44,10 +44,10 @@ const AdminPage = () => {
                 <ArrowBackIcon />
             </IconButton>
             <Box mt={4} sx={{ display: 'flex', justifyContent: 'center'}}>
-                <Typography variant="h5" align="center" color="secondary" gutterBottom>
-                    <FormattedMessage id="usersListTitle" defaultMessage="Users List" />
-                </Typography>
                 <List>
+                    <Typography variant="h5" align="center" color="secondary" gutterBottom>
+                        <FormattedMessage id="usersListTitle" defaultMessage="Users List" />
+                    </Typography>
                     {users.map((user) => (
                     <ListItem key={user.id} button onClick={() => handleUserClick(user.username)}>
                         <ListItemText primary={user.username} align="center" />
