@@ -39,6 +39,7 @@
     "ratingFilterLabel": "评级从",
     "thisWeekFilterLabel": "本周帖",
     "authorRatedFilterLabel": "自己高度评价",
+    "createdByLable": "创造的",
     "searchResultMessage": "搜索结果",
     "absentSearchResultMessage": "未找到与查询匹配",
     "signInMessage": "登录享受服务",

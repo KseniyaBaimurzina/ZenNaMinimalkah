@@ -17,6 +17,7 @@ const UserPage = () => {
     const [userReviews, setUserReviews] = useState([]);
     const [sortOption, setSortOption] = useState("");
     const [filterOption, setFilterOption] = useState("");
+    const [userLikes, setUserLikes] = useState([]);
     const [language] = useState(localStorage.getItem("language") || "en-US");
     const theme = localStorage.getItem("isDarkMode") === 'true' ? darkTheme : lightTheme;
 
@@ -39,7 +40,8 @@ const UserPage = () => {
     const getUserReviews = useCallback(async () => {
         try {
             const res = await api.get(`/user/reviews?username=${username}`);
-            setUserReviews(res.data);
+            setUserReviews(res.data.userReviews);
+            setUserLikes(res.data.userLikes);
         } catch (err) {
             console.error(err);
         }
@@ -169,8 +171,7 @@ const UserPage = () => {
                 </Container>
                 {sortReviews(userReviews, sortOption, filterOption).map((review) => (
                 <div key={review.review_id} >
-                    <ReviewPost review={review} liked={review.liked} username={username} rated={review.rated}/>
-                        
+                    <ReviewPost review={review} liked={review.liked} username={username} rated={review.rated} userLikes={userLikes}/>
                 </div>
                 ))}
             </Container>

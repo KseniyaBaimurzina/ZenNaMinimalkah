@@ -2,6 +2,7 @@ import { Button, Menu, MenuItem } from "@material-ui/core";
 import React, { useState } from "react";
 import useStyles from "../Styles/AppStyles";
 
+
 const LanguageSwitch = () => {
     const classes = useStyles();
     const [anchorEl, setAnchorEl] = useState(null);
@@ -25,6 +26,8 @@ const LanguageSwitch = () => {
         handleClose();
         window.location.reload();
     };
+
+   
 
     return (
         <div>

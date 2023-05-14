@@ -12,7 +12,7 @@ function App() {
     return (
         <ThemeProvider theme={theme}>
             <IntlProvider locale="en-US">
-            <CssBaseline />
+                <CssBaseline />
                     <BrowserRouter>
                         <Routes>
                             <Route path="/" element={<MainPage />} />

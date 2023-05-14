@@ -21,7 +21,7 @@ import useStyles from "../Styles/AppStyles";
 const ReviewPage = () => {
     const location = useLocation();
     const classes = useStyles();
-    const { review, liked, rated } = location.state;
+    const { review, liked, rated, userLikes } = location.state;
     const navigate = useNavigate();
     const [language] = useState(localStorage.getItem("language") || "en-US");
     const [comments, setComments] = useState([]);
@@ -65,7 +65,7 @@ const ReviewPage = () => {
                 <ArrowBackIcon />
             </IconButton>
             <Container className={classes.reviewPageContainer} >
-                <ReviewPost review={review} liked={likedByCurrentUser} rated={rated} />
+                <ReviewPost review={review} liked={likedByCurrentUser} rated={rated} userLikes={userLikes} />
                 <Container style={{marginBottom: '15px'}}>
                     <Divider style={{ margin: '16px 0' }} />
                     {comments.length === 0 ? (

@@ -9,6 +9,7 @@ import useStyles from "../Styles/AppStyles";
 const Reviews = () => {
     const [popularReviews, setPopularReviews] = useState([]);
     const [latestReviews, setLatestReviews] = useState([]);
+    const [userLikes, setUserLikes] = useState([])
     const [likedReviews, setLikedReviews] = useState([]);
     const [ratedReviews, setRatedReviews] = useState([]);
     const [language] = useState(localStorage.getItem("language") || "en-US");
@@ -19,6 +20,7 @@ const Reviews = () => {
             const res = await api.get("/reviews");
             setPopularReviews(res.data.popularReviews);
             setLatestReviews(res.data.latestReviews);
+            setUserLikes(res.data.userLikes);
             if (res.data.hasOwnProperty("liked_reviews"))
                 setLikedReviews(res.data.liked_reviews);
             if(res.data.hasOwnProperty("rated_reviews"))
@@ -49,7 +51,9 @@ const Reviews = () => {
                             key={review.review_id} 
                             review={review} 
                             liked={likedReviews.includes(review.review_id)} 
-                            rated={ratedReviews.includes(review.review_id)} />
+                            rated={ratedReviews.includes(review.review_id)}
+                            userLikes={userLikes}
+                        />
                     ))}
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -61,7 +65,8 @@ const Reviews = () => {
                             key={review.review_id} 
                             review={review} 
                             liked={likedReviews.includes(review.review_id)} 
-                            rated={ratedReviews.includes(review.review_id)} 
+                            rated={ratedReviews.includes(review.review_id)}
+                            userLikes={userLikes}
                         />
                     ))}
                     </Grid>

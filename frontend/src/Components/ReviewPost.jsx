@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { IntlProvider, FormattedMessage, FormattedDate } from "react-intl";
+import { IntlProvider, FormattedMessage } from "react-intl";
 import { Card, Button, CardHeader, CardContent, CardActions, Typography, IconButton, Chip, ThemeProvider } from "@material-ui/core";
 import { Favorite as FavoriteIcon, Clear, Edit } from "@material-ui/icons";
 import ReactMarkdown from "react-markdown";
@@ -10,8 +10,11 @@ import api from "../axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import useStyles from "../Styles/AppStyles";
 import { lightTheme, darkTheme } from "../Styles/Theme";
+import { formatDistanceToNow } from 'date-fns';
+import { enUS, zhCN } from 'date-fns/locale';
 
-const ReviewPost = ({ review, liked, rated, username=null }) => {
+
+const ReviewPost = ({ review, liked, rated, userLikes, username=null }) => {
     const classes = useStyles();
     const [likedByCurrentUser, setLikedByCurrentUser] = useState(liked);
     const [showFullContent, setShowFullContent] = useState(false);
@@ -21,6 +24,10 @@ const ReviewPost = ({ review, liked, rated, username=null }) => {
     const location = useLocation();
     const currentPath = location.pathname;
     const theme = localStorage.getItem("isDarkMode") === 'true' ? darkTheme : lightTheme;
+    const dateLocale = {
+        "en-US": enUS,
+        "zh-CN": zhCN
+    }
 
     const postRating = usePostRating({
         review_id: review.review_id,
@@ -52,12 +59,19 @@ const ReviewPost = ({ review, liked, rated, username=null }) => {
     });
 
     const handleOpen = useCallback(() => {
-        navigate("/review-page", { state: { review: review, liked: likedByCurrentUser, rated: rated }});
+        navigate("/review-page", { state: { review: review, liked: likedByCurrentUser, rated: rated, userLikes: userLikes }});
     }, [navigate, review, likedByCurrentUser, rated]);
 
     const handleOpenText = () => {
         setContent(review.content);
         setShowFullContent(true);
+    }
+
+    const dateToNow = (dateStr) => {
+        const date = new Date(dateStr);
+        const locale = dateLocale[localStorage.getItem("language")] || enUS;
+        const formattedDate = formatDistanceToNow(date, { addSuffix: true, locale: locale});
+        return formattedDate
     }
 
     const handleUpdateReview = (review) => {
@@ -93,14 +107,31 @@ const ReviewPost = ({ review, liked, rated, username=null }) => {
         <ThemeProvider theme={theme}>
             <IntlProvider locale={language} messages={require(`../Languages/${language}.json`)}>
                 <Card variant="outlined" className={classes.card}>
+
                     <div className={classes.userPageReview}>
                         <CardHeader
-                            title={review.creator_username}
-                            subheader={<FormattedDate
-                                value={new Date(review.creation_time)}
-                                dateStyle="medium"
-                                timeStyle="short"
-                            />}
+                            style={{ width: '100%' }}
+                            subheader={
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}> 
+                                    <Typography variant="h8">
+                                        <FormattedMessage id="createdByLable" defaultMessage="Created by"/> {review.creator_username} | {userLikes[review.creator_username]}
+                                            <FavoriteIcon color="secondary" fontSize="inherit" />
+                                    </Typography>
+                                    <Typography variant="h8">{dateToNow(review.creation_time)}</Typography>
+                                </div>
+                            }
+                            title={
+                                    <Typography variant="h5" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    {review.title}
+                                    <Rating
+                                    name={`rating-${review.review_id}`}
+                                    value={review.users_rating}
+                                    precision={0.5}
+                                    onChange={(e, value) =>handleRate(e,value)}
+                                />
+                                    </Typography>
+                            }
+                            
                             className={classes.cardHeader}
                         />
                         <div className={classes.cardButtons}>
@@ -108,16 +139,6 @@ const ReviewPost = ({ review, liked, rated, username=null }) => {
                         </div>
                     </div>
                     <CardContent>
-                        <Typography variant="h5">
-                            {review.title}
-                            <Rating
-                                name={`rating-${review.review_id}`}
-                                // name="rating"
-                                value={review.users_rating}
-                                precision={0.5}
-                                onChange={(e, value) =>handleRate(e,value)}
-                            />
-                        </Typography>
                         <Typography variant="h6">
                             <FormattedMessage id={review.category} defaultMessage={review.category} />
                             {review.review_tags.map((tag, index) => (
@@ -146,7 +167,7 @@ const ReviewPost = ({ review, liked, rated, username=null }) => {
                     <CardActions disableSpacing color="secondary">
                         <IconButton
                             aria-label="Add to favorites"
-                            style={{ color: likedByCurrentUser ? "#b51261" : "#808080" }}
+                            style={{ color: likedByCurrentUser ? "#b61261" : "#808080" }}
                             onClick={handleLikeButtonClick}
                         >
                         <FavoriteIcon />

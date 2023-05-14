@@ -111,6 +111,7 @@ app.get("/reviews", async function(req, res) {
             'popularReviews': await revFuncs.GetPopularReviews(),
             'latestReviews': await revFuncs.GetLatestReviews()
         };
+        reviews.userLikes = revFuncs.GetAuthorsLikes(reviews.latestReviews);
         try {
             var auth = await userFuncs.AuthorizeUser(req.cookies.access_token)
         } catch {
@@ -133,12 +134,18 @@ app.get("/user/reviews", async function(req, res) {
     try {
         var user = await userFuncs.AuthorizeUser(req.cookies.access_token)
         if (user.role === 'admin') {
-            var userReviews = await revFuncs.GetUserReviews(req.query.username);
+            var reviews = {
+                userReviews: await revFuncs.GetUserReviews(req.query.username)
+            }
+            reviews.userLikes = revFuncs.GetAuthorsLikes(reviews.userReviews)
         } else {
-            var userReviews = await revFuncs.GetUserReviews(jwt.verify(req.cookies.access_token, config["SECRET_JWT_KEY"]).username);
+            var reviews = {
+                userReviews: await revFuncs.GetUserReviews(jwt.verify(req.cookies.access_token, config["SECRET_JWT_KEY"]).username)
+            }
+            reviews.userLikes = revFuncs.GetAuthorsLikes(reviews.userReviews)
         }
         res.status(200);
-        res.send(userReviews);
+        res.send(reviews);
     } catch (err) {
         console.error(err);
         res.status(500);

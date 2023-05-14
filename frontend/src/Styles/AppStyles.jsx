@@ -121,6 +121,15 @@ const useStyles = makeStyles((theme) => ({
     homePageButton: {
         float: 'left', 
         padding: '1em'
+    },
+    toastContainer: {
+        backgroundColor: 'transparent',
+        border: "2px solid #0a0f64",
+        color: theme.palette.text,
+        fontSize: '16px',
+        borderRadius: '5px',
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
+        padding: '12px',
     }
 }));
 

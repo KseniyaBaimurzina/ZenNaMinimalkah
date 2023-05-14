@@ -23,8 +23,8 @@ export default function RegistrationForm() {
         api.post("/registration", { username: data.username, email: data.email, password: data.password })
         .then(res => {
             if (res.data === "OK") {
-            alert("Success");
-            navigate("/login");
+                alert("Success")
+                navigate("/login");
             }
         })
         .catch(function (error) {

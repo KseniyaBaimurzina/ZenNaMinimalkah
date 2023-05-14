@@ -83,6 +83,13 @@ function GetPopularReviews() {
     });
 }
 
+function GetAuthorsLikes(reviews) {
+    return reviews.reduce((authorsLikes, { creator_username, like_count }) => {
+        authorsLikes[creator_username] = (authorsLikes[creator_username] || 0) + like_count;
+        return authorsLikes;
+    }, {});
+}
+
 async function GetReviewTags(reviews) {
     try {
         var tags = await GetTags("ReviewTags");
@@ -176,6 +183,7 @@ export {
     UpdateReview,
     DeleteReview,
     GetPopularReviews,
+    GetAuthorsLikes,
     GetLatestReviews,
     GetUserReviews,
     GetCategories,

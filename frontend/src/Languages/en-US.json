@@ -39,6 +39,7 @@
     "ratingFilterLabel": "Rating from",
     "thisWeekFilterLabel": "This week reviews",
     "authorRatedFilterLabel": "Authors highly rated reviews",
+    "createdByLable": "Created by",
     "searchResultMessage": "Search Results for",
     "absentSearchResultMessage": "No results, matching",
     "signInMessage": "Sign in and enjoy the service",
