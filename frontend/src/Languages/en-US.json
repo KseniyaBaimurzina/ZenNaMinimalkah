@@ -1,5 +1,5 @@
 {
-    "popularReviewsTitle": "POPULAR REVIEWS",
+    "mostRatedReviewsTitle": "MOST RATED REVIEWS",
     "latestReviewsTitle": "LATEST REVIEWS",
     "usersListTitle": "USERS LIST",
     "headerTitle": "PUMBA REVIEWS",
@@ -20,7 +20,7 @@
     "Movies": "Movies",
     "Music": "Music",
     "TV Shows": "TV Shows",
-    "rating": "Rating",
+    "rating": "Author rating",
     "commentLabel": "Comment",
     "tagsLabel": "Tags",
     "tagsPlaceholder": "Add Tags",

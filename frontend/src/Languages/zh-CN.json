@@ -1,5 +1,5 @@
 {
-    "popularReviewsTitle": "热帖",
+    "mostRatedReviewsTitle": "大多数额定帖",
     "latestReviewsTitle": "最新帖",
     "usersListTitle": "用户列表",
     "headerTitle": "PUMBA评论",
@@ -20,7 +20,7 @@
     "Movies": "影片",
     "Music": "音乐",
     "TV Shows": "电视剧",
-    "rating": "分数",
+    "rating": "作家分数",
     "commentLabel": "评论",
     "tagsLabel": "标签",
     "tagsPlaceholder": "加标签",

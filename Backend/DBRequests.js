@@ -41,8 +41,7 @@ const getPopularReviews = function() {
             `LEFT JOIN Likes ON Reviews.review_id = Likes.review_id ` +
             `LEFT JOIN Ratings ON Reviews.review_id = Ratings.review_id ` +
             `GROUP BY Reviews.review_id ` +
-            `HAVING like_count > 0 ` +
-            `ORDER BY like_count DESC, Reviews.creation_time DESC;`,
+            `ORDER BY users_rating DESC, Reviews.creation_time DESC;`,
             function(err, res) {
                 if (err) {
                     console.error(err);

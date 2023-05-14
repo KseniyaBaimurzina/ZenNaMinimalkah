@@ -42,7 +42,7 @@ const Reviews = () => {
                 <Grid container >
                     <Grid item xs={12} md={6} >
                     <Typography variant="h6" className={classes.homeHeadings}>
-                        <FormattedMessage id="popularReviewsTitle" defaultMessage="Popular Reviews" />
+                        <FormattedMessage id="mostRatedReviewsTitle" defaultMessage="MOST RATED REVIEWS" />
                     </Typography>
                     {popularReviews.map((review) => (
                         <ReviewPost 
@@ -54,7 +54,7 @@ const Reviews = () => {
                     </Grid>
                     <Grid item xs={12} md={6}>
                     <Typography variant="h6" className={classes.homeHeadings}>
-                        <FormattedMessage id="latestReviewsTitle" defaultMessage="Latest Reviews" />
+                        <FormattedMessage id="latestReviewsTitle" defaultMessage="LATEST REVIEWS" />
                     </Typography>
                     {latestReviews.map((review) => (
                         <ReviewPost 
