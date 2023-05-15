@@ -17,6 +17,7 @@ import {
 import ReviewPost from "../Components/ReviewPost";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import useStyles from "../Styles/AppStyles";
+import { fetchToken } from "../Components/Auth";
 
 const ReviewPage = () => {
     const location = useLocation();
@@ -58,6 +59,28 @@ const ReviewPage = () => {
         return () => clearInterval(interval);
     }, [getComments]);
 
+    const commentCreation = fetchToken() ? (
+        <>
+            <FormattedMessage id="commentLabel" defaultMessage="Comment">
+                {(message) => (
+                    <TextField
+                    fullWidth
+                    margin="normal"
+                    id="comment"
+                    label={message}
+                    multiline
+                    minRows={4}
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    />
+                )}
+            </FormattedMessage>
+            <Button variant='contained' color="primary" onClick={publishComment}>
+                <FormattedMessage id="publishButton" defaultMessage="Publish" />
+            </Button>
+        </>
+    ) : null;
+
     return (
         <IntlProvider locale={language} messages={require(`../Languages/${language}.json`)}>
             <Header />
@@ -91,23 +114,7 @@ const ReviewPage = () => {
                             ))}
                         </List>
                     )}
-                    <FormattedMessage id="commentLabel" defaultMessage="Comment">
-                        {(message) => (
-                            <TextField
-                            fullWidth
-                            margin="normal"
-                            id="comment"
-                            label={message}
-                            multiline
-                            minRows={4}
-                            value={comment}
-                            onChange={(e) => setComment(e.target.value)}
-                            />
-                        )}
-                    </FormattedMessage>
-                    <Button variant='contained' color="primary" onClick={publishComment}>
-                        <FormattedMessage id="publishButton" defaultMessage="Publish" />
-                    </Button>
+                    {commentCreation}
                 </Container>
             </Container>
         </IntlProvider>
