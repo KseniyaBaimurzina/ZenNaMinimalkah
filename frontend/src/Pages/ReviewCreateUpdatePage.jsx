@@ -65,7 +65,7 @@ const ReviewCreateUpdatePage = () => {
             typeof tag === 'object' ? tag.tag : tag
         );
         setTags(tagsValue);
-      };
+    };
 
     const handlePublish = useCallback(async () => {
         try {

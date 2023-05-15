@@ -15,23 +15,6 @@ const getQuery = function(table, columns = null, values = null) {
     });
 }
 
-const getLikesRow = function() {
-    return new Promise((resolve, reject) => {
-        connection.query(`SELECT review_id, COUNT(*) AS like_count FROM Likes ` +
-            `GROUP BY review_id ` +
-            `ORDER BY like_count DESC;`,
-            function(err, res) {
-                if (err) {
-                    console.error(err);
-                    reject(err);
-                } else {
-                    const rows = res.map(row => ({...row, like_count: row.like_count !== undefined ? row.like_count : 0 }));
-                    resolve(rows);
-                }
-            });
-    });
-}
-
 const getPopularReviews = function() {
     return new Promise((resolve, reject) => {
         connection.query(`SELECT Reviews.*,` +
@@ -190,6 +173,5 @@ export {
     deleteQuery,
     deleteLikeQuery,
     getReviews,
-    getLikesRow,
     getPopularReviews
 };

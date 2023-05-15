@@ -16,6 +16,7 @@ export default function RegistrationForm() {
 
     const handleLoginClick = () => {
         localStorage.removeItem('temitope');
+        localStorage.removeItem('role');
         navigate('/login');
     };
 

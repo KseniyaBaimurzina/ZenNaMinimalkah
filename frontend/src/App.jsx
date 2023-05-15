@@ -1,4 +1,4 @@
-import {Routes, BrowserRouter, Route } from 'react-router-dom';
+import { Routes, BrowserRouter, Route } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/styles';
 import { CssBaseline } from '@material-ui/core';
 import { IntlProvider } from 'react-intl';

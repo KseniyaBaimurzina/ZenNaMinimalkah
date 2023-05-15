@@ -204,7 +204,7 @@ app.post("/search", async function(req, res) {
 app.post("/rate", async function(req, res) {
     try {
         var user = await userFuncs.AuthorizeUser(req.cookies.access_token);
-        await rateFuncs.CreateRate(req.body.rate, req.body.review_id, user.username, req.body.rated);
+        await rateFuncs.CreateRate(req.body.rate, req.body.review_id, user.username);
         res.sendStatus(200);
     } catch (err) {
         console.error(err);

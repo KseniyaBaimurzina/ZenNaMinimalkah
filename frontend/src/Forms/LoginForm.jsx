@@ -49,7 +49,7 @@ export default function LoginForm() {
             }
             })
             .catch(function (error) {
-            if (error.response.status === 401) {
+            if (error.response.status === 400) {
                 setErrorMessage("Incorrect username or password. Please, try again");
             } else {
                 setErrorMessage(error.response.data);

@@ -44,7 +44,6 @@ function GetUsersList(user) {
     });
 }
 
-
 function GetHashedPassword(password) {
     var key = config["SECRET_KEY"];
     var hmac = crypto.createHmac('sha256', key);
