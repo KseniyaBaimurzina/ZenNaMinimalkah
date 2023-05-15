@@ -65,7 +65,7 @@ const Header = () => {
                         {adminButton}
                         <TextField
                             className={classes.searchTextField}
-                            variant='filled'
+                            variant='outlined'
                             placeholder="SEARCH"
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyPress={handleKeyPress} 
